@@ -11,7 +11,5 @@ BaselineOfReuseTale >> baseline: spec [
 	spec
 		baseline: 'NeoCSV'
 		with: [ spec repository: 'github://svenvc/NeoCSV/repository' ].
-	spec
-		baseline: 'ReuseTale'
-		with: [ spec repository: 'github://StevenCostiou/ReuseTale' ]
+	spec for: #common do: [ spec package: 'ReuseTale' ]
 ]
