@@ -1,5 +1,5 @@
 Class {
-	#name : #RTSubSystem,
+	#name : #RTSubSystemData,
 	#superclass : #Object,
 	#instVars : [
 		'name',
@@ -13,90 +13,91 @@ Class {
 	#category : #'ReuseTale-model'
 }
 
-{ #category : #'instance creation' }
-RTSubSystem class >> newFrom: csvData [
-]
-
 { #category : #accessing }
-RTSubSystem >> description [
+RTSubSystemData >> description [
 
 	^ description
 ]
 
 { #category : #accessing }
-RTSubSystem >> description: anObject [
+RTSubSystemData >> description: anObject [
 
 	description := anObject
 ]
 
 { #category : #accessing }
-RTSubSystem >> firstVersionDate [
+RTSubSystemData >> firstVersionDate [
 
 	^ firstVersionDate
 ]
 
 { #category : #accessing }
-RTSubSystem >> firstVersionDate: anObject [
+RTSubSystemData >> firstVersionDate: anObject [
 
 	firstVersionDate := anObject
 ]
 
 { #category : #accessing }
-RTSubSystem >> mostRecentVersionDate [
+RTSubSystemData >> mostRecentVersionDate [
 
 	^ mostRecentVersionDate
 ]
 
 { #category : #accessing }
-RTSubSystem >> mostRecentVersionDate: anObject [
+RTSubSystemData >> mostRecentVersionDate: anObject [
 
 	mostRecentVersionDate := anObject
 ]
 
 { #category : #accessing }
-RTSubSystem >> name [
+RTSubSystemData >> name [
 
 	^ name
 ]
 
 { #category : #accessing }
-RTSubSystem >> name: anObject [
+RTSubSystemData >> name: anObject [
 
 	name := anObject
 ]
 
 { #category : #accessing }
-RTSubSystem >> nbDevelopers [
+RTSubSystemData >> nbDevelopers [
 
 	^ nbDevelopers
 ]
 
 { #category : #accessing }
-RTSubSystem >> nbDevelopers: anObject [
+RTSubSystemData >> nbDevelopers: anObject [
 
 	nbDevelopers := anObject
 ]
 
+{ #category : #printing }
+RTSubSystemData >> printOn: aStream [
+	aStream << self name
+]
+
 { #category : #accessing }
-RTSubSystem >> publications [
+RTSubSystemData >> publications [
 
 	^ publications
 ]
 
 { #category : #accessing }
-RTSubSystem >> publications: anObject [
+RTSubSystemData >> publications: anObject [
 
 	publications := anObject
 ]
 
 { #category : #accessing }
-RTSubSystem >> usagesInPrototypes [
+RTSubSystemData >> usagesInPrototypes [
 
 	^ usagesInPrototypes
 ]
 
 { #category : #accessing }
-RTSubSystem >> usagesInPrototypes: anObject [
+RTSubSystemData >> usagesInPrototypes: anObject [
 
 	usagesInPrototypes := anObject
 ]
