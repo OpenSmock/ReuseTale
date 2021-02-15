@@ -6,7 +6,7 @@ Class {
 		'subSystems',
 		'prototypeData'
 	],
-	#category : #ReuseTale
+	#category : #'ReuseTale-model'
 }
 
 { #category : #'instance creation' }

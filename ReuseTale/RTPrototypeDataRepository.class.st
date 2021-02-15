@@ -4,7 +4,7 @@ Class {
 	#classInstVars : [
 		'current'
 	],
-	#category : #ReuseTale
+	#category : #'ReuseTale-model'
 }
 
 { #category : #building }
