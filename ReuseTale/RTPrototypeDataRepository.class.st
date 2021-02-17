@@ -59,7 +59,7 @@ RTPrototypeDataRepository class >> openFileToBuildPrototypesData [
 		          validExtensions: #( 'csv' );
 		          title: 'Select the prototypes data file';
 		          answerPathName.
-	filename := window open answer.
+	filename := window openModal answer.
 	filename ifNil: [ ^ self ].
 
 	self buildPrototypesDataFromFilename: filename asFileReference.
@@ -78,7 +78,7 @@ RTPrototypeDataRepository class >> openFileToBuildSubSystemsData [
 		          validExtensions: #( 'csv' );
 		          title: 'Select the subsystems data file';
 		          answerPathName.
-	filename := window open answer.
+	filename := window openModal answer.
 	filename ifNil: [ ^ self ].
 
 	self buildSubSystemsDataFromFilename: filename asFileReference.
