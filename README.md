@@ -9,7 +9,7 @@ Metacello new
   load.
 ```
 
-## Import datas
+## Import datas with UI
 
 ```Smalltalk
 "First file"
@@ -21,13 +21,35 @@ RTPrototypeDataRepository openFileToBuildSubSystemsData.
 RTPrototypeDataRepository openFileToBuildPrototypesData. 
 ```
 
+
+## Import datas with DoIt 
+
 ```Smalltalk
-"To check results"
-RTPrototypeDataRepository prototypes inspect.
-RTPrototypeDataRepository subSystems inspect.
+"First file"
+RTPrototypeDataRepository buildSubSystemsDataFromFilename: 'your\path\SubSystems_data.csv' asFileReference.
 ```
 
 ```Smalltalk
-"To clean results"
+"Second file"
+RTPrototypeDataRepository buildPrototypesDataFromFilename: 'your\path\Prototypes_data.csv' asFileReference.
+```
+
+## Inspect imported datas
+
+### Prototypes
+
+```Smalltalk
+RTPrototypeDataRepository prototypes inspect.
+```
+
+### SubSystems
+
+```Smalltalk
+RTPrototypeDataRepository subSystems inspect.
+```
+
+## Remove imported datas
+
+```Smalltalk
 RTPrototypeDataRepository reset.
 ```
