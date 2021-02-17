@@ -23,9 +23,27 @@ RTPrototypeData class >> fromRawData: array [
 ]
 
 { #category : #adding }
-RTPrototypeData >> addSubSystem: aRTSubSystemData withData: aRTData [
+RTPrototypeData >> addSubSystem: aRTSubSystem [
 
-	self subSystems at: aRTSubSystemData put: aRTData
+	self subSystems add: aRTSubSystem
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbReusedClasses [
+
+	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData classes + sum ].
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbReusedComponents [
+	
+	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData components + sum ].
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbReusedMethods [
+
+	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData methods + sum ].
 ]
 
 { #category : #printing }
@@ -36,5 +54,5 @@ RTPrototypeData >> printOn: aStream [
 { #category : #accessing }
 RTPrototypeData >> subSystems [
 
-	^ subSystems ifNil: [ subSystems := Dictionary new ]
+	^ subSystems ifNil: [ subSystems := SortedCollection sortBlock:[ :a :b | (a name) < (b name) ] ]
 ]
