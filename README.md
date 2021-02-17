@@ -29,5 +29,5 @@ RTPrototypeDataRepository subSystems inspect.
 
 ```Smalltalk
 "To clean results"
-RTPrototypeDataRepository clean.
+RTPrototypeDataRepository reset.
 ```
