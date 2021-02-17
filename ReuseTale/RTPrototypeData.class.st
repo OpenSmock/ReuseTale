@@ -37,19 +37,19 @@ RTPrototypeData >> addSubSystem: aRTSubSystem [
 { #category : #statistics }
 RTPrototypeData >> nbReusedClasses [
 
-	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData classes + sum ].
+	^self subSystems inject: 0 into: [ :sum :e | (e getSourceCodeDataHistoryAtDateTime: self mostRecentVersionDate) classes + sum ].
 ]
 
 { #category : #statistics }
 RTPrototypeData >> nbReusedComponents [
 	
-	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData components + sum ].
+	^self subSystems inject: 0 into: [ :sum :e | (e getSourceCodeDataHistoryAtDateTime: self mostRecentVersionDate) components + sum ].
 ]
 
 { #category : #statistics }
 RTPrototypeData >> nbReusedMethods [
 
-	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData methods + sum ].
+	^self subSystems inject: 0 into: [ :sum :e | (e getSourceCodeDataHistoryAtDateTime: self mostRecentVersionDate) methods + sum ].
 ]
 
 { #category : #statistics }

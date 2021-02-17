@@ -20,7 +20,7 @@ RTData >> addDeveloper: anId [
 	self developers add: anId
 ]
 
-{ #category : #accessing }
+{ #category : #api }
 RTData >> addSourceCodeData: aRTSourceCodeData dateTime: aDateTime [
 	
 	aDateTime ifNil:[self error:'Date should be not nil'].
@@ -61,6 +61,12 @@ RTData >> firstVersionDate [
 RTData >> firstVersionDate: anObject [
 
 	firstVersionDate := anObject
+]
+
+{ #category : #api }
+RTData >> getSourceCodeDataHistoryAtDateTime: aDateTime [
+
+	^self sourceCodeDataHistory at: aDateTime ifAbsent:[nil]
 ]
 
 { #category : #accessing }

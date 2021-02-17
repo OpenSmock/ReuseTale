@@ -15,7 +15,8 @@ RTPrototypeDataTest >> testDatas [
 	self assert: prototype nbComponents equals: 10. 
 	self assert: prototype nbClasses equals: 20.  
 	self assert: prototype nbMethods equals: 100. 
-	 
+	
+	self assert: (prototype mostRecentVersionDate isKindOf: DateAndTime).	 
 	self assert: prototype nbDevelopers equals: 2.
 	self assert: prototype developers asOrderedCollection first equals: 1.
 	self assert: prototype developers asOrderedCollection second equals: 2.
