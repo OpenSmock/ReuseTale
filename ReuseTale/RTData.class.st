@@ -61,6 +61,18 @@ RTData >> name: anObject [
 	name := anObject
 ]
 
+{ #category : #statistics }
+RTData >> nbClasses [
+
+	^self sourceCodeData classes
+]
+
+{ #category : #statistics }
+RTData >> nbComponents [
+
+	^self sourceCodeData components
+]
+
 { #category : #accessing }
 RTData >> nbDevelopers [
 
@@ -71,6 +83,12 @@ RTData >> nbDevelopers [
 RTData >> nbDevelopers: anObject [
 
 	nbDevelopers := anObject
+]
+
+{ #category : #statistics }
+RTData >> nbMethods [
+
+	^self sourceCodeData methods
 ]
 
 { #category : #accessing }
