@@ -41,8 +41,6 @@ RTPrototypeDataRepository class >> buildSubSystemsDataFromFilename: aFileReferen
 			((subSystemDataArray at: 5) at: colIndex).
 		subSystem nbDevelopers:
 			((subSystemDataArray at: 6) at: colIndex) asNumber.
-		subSystem usagesInPrototypes:
-			((subSystemDataArray at: 7) at: colIndex) asNumber.
 		self subSystems at: subSystem name put: subSystem ]
 ]
 
@@ -52,9 +50,43 @@ RTPrototypeDataRepository class >> current [
 	^ current ifNil: [ current := Dictionary new ]
 ]
 
+{ #category : #'building ui' }
+RTPrototypeDataRepository class >> openFileToBuildPrototypesData [
+	<script>
+	| window filename |
+	window :=FileDialogWindow basicNew initialize validExtensions: #('csv') ; title: 'Select the prototypes data file'; answerPathName.
+	filename := (World openModal: window) answer.
+	filename ifNil:[^self].
+	
+	self buildPrototypesDataFromFilename: filename asFileReference.
+	
+	self prototypes notEmpty ifTrue:[
+		self inform: '[ReuseTale] Prototypes data import done'.	
+	] ifFalse:[
+		self inform: '[ReuseTale] Prototypes import error'.	
+	].
+]
+
+{ #category : #'building ui' }
+RTPrototypeDataRepository class >> openFileToBuildSubSystemsData [
+	<script>
+	| window filename |
+	window :=FileDialogWindow basicNew initialize validExtensions: #('csv') ; title: 'Select the subsystems data file'; answerPathName.
+	filename := (World openModal: window) answer.
+	filename ifNil:[^self].
+	
+	self buildSubSystemsDataFromFilename: filename asFileReference.
+	
+	self subSystems notEmpty ifTrue:[
+		self inform: '[ReuseTale] Subsystems data import done'.	
+	] ifFalse:[
+		self inform: '[ReuseTale] Subsystems import error'.	
+	].
+]
+
 { #category : #accessing }
 RTPrototypeDataRepository class >> prototypes [
-
+	<script:'self prototypes inspect'>
 	^ self current at: #prototypes ifAbsentPut: [ 
 		  SortedCollection new
 			  sortBlock: [ :a :b | a name < b name ];
@@ -63,12 +95,12 @@ RTPrototypeDataRepository class >> prototypes [
 
 { #category : #building }
 RTPrototypeDataRepository class >> reset [
-
+	<script>
 	current := nil
 ]
 
 { #category : #accessing }
 RTPrototypeDataRepository class >> subSystems [
-
+	<script:'self subSystems inspect'>
 	^ self current at: #subSystems ifAbsentPut: [ Dictionary new ]
 ]

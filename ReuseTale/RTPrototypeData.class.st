@@ -18,7 +18,7 @@ RTPrototypeData class >> fromRawData: array [
 		| subSystem |
 		subSystem := RTPrototypeDataRepository subSystems at:
 			             (array at: i) first.
-		protoData addSubSystem: subSystem withData: (array at: i) ].
+		protoData addSubSystem: subSystem].
 	^ protoData
 ]
 

@@ -1,16 +1,24 @@
 "
-To load datas :
+""To load datas""
+""With UI""
+""#1 =>"" 
+RTPrototypeDataRepository openFileToBuildSubSystemsData. 
+""#2 =>"" 
+RTPrototypeDataRepository openFileToBuildPrototypesData.
 
-""First""
+""Manually""
+""#1 =>"" 
 RTPrototypeDataRepository buildSubSystemsDataFromFilename: 
-	'your\path\to\file\15Y-REUSE-DATA_-_SubSystems.csv' asFileReference.
-
-""Second""
+		'your\path\to\file\SubSystems_data.csv' asFileReference.
+""#2 =>"" 
 RTPrototypeDataRepository buildPrototypesDataFromFilename:
-	'your\path\to\file\15Y-REUSE-DATA_-_prototypes_data.csv' asFileReference.
+		'your\path\to\file\Prototypes_data.csv' asFileReference.
 
-To Inspect loading datas :
+""To Inspect loaded datas :""
 RTPrototypeDataRepository prototypes inspect.
+
+""To clean""
+RTPrototypeDataRepository clean.
 "
 Class {
 	#name : #ManifestReuseTale,
