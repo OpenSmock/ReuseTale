@@ -17,6 +17,8 @@ RTPrototypeDataTest >> testDatas [
 	self assert: prototype nbMethods equals: 100. 
 	 
 	self assert: prototype nbDevelopers equals: 2.
+	self assert: prototype developers asOrderedCollection first equals: 1.
+	self assert: prototype developers asOrderedCollection second equals: 2.
 	self assert: prototype nbSubSystems equals: 2.
 ]
 

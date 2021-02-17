@@ -9,13 +9,12 @@ Class {
 
 { #category : #building }
 RTPrototypeDataRepository class >> buildPrototypesDataFromFilename: aFileReference [
-
-	| rawData |
+	| rawData |	
 	rawData := (NeoCSVReader on: aFileReference readStream) upToEnd
 		           asOrderedCollection.
 	"removing header"
 	rawData removeFirst.
-	"splitting into each prototypeprototype"
+	"splitting into each prototype"
 	rawData := rawData splitOn: [ :e | e first isNil ].
 	self prototypes addAll:
 		(rawData collect: [ :data | RTPrototypeData fromRawData: data ])
@@ -35,12 +34,11 @@ RTPrototypeDataRepository class >> buildSubSystemsDataFromFilename: aFileReferen
 		subSystem description: ((subSystemDataArray at: 2) at: colIndex).
 		subSystem publications:
 			((subSystemDataArray at: 3) at: colIndex) asNumber.
-		subSystem firstVersionDate:
-			((subSystemDataArray at: 4) at: colIndex).
-		subSystem mostRecentVersionDate:
-			((subSystemDataArray at: 5) at: colIndex).
-		subSystem nbDevelopers:
-			((subSystemDataArray at: 6) at: colIndex) asNumber.
+		subSystem firstVersionDate: (((subSystemDataArray at: 4) at: colIndex) ifNotNil:[ :e | (DateAndTime fromStringDDMMYYYY: e)]).
+		subSystem mostRecentVersionDate: (((subSystemDataArray at: 5) at: colIndex) ifNotNil:[ :e | (DateAndTime fromStringDDMMYYYY: e)]).	
+		"subSystem firstVersionDate: ((subSystemDataArray at: 4) at: colIndex).
+		subSystem mostRecentVersionDate: ((subSystemDataArray at: 5) at: colIndex)."
+		subSystem nbDevelopers: ((subSystemDataArray at: 6) at: colIndex) asNumber.
 		self subSystems at: subSystem name put: subSystem ]
 ]
 

@@ -3,8 +3,9 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'name',
-		'sourceCodeData',
+		'sourceCodeDataHistory',
 		'publications',
+		'developers',
 		'nbDevelopers',
 		'mostRecentVersionDate',
 		'firstVersionDate',
@@ -12,6 +13,20 @@ Class {
 	],
 	#category : #'ReuseTale-model'
 }
+
+{ #category : #api }
+RTData >> addDeveloper: anId [
+
+	self developers add: anId
+]
+
+{ #category : #accessing }
+RTData >> addSourceCodeData: aRTSourceCodeData dateTime: aDateTime [
+	
+	aDateTime ifNil:[self error:'Date should be not nil'].
+	aRTSourceCodeData ifNil:[self error:'Source code datas should be not nil'].
+	self sourceCodeDataHistory at: aDateTime put: aRTSourceCodeData
+]
 
 { #category : #accessing }
 RTData >> description [
@@ -23,6 +38,17 @@ RTData >> description [
 RTData >> description: anObject [
 
 	description := anObject
+]
+
+{ #category : #accessing }
+RTData >> developers [
+	developers ifNil:[developers := Set new].
+	^ developers
+]
+
+{ #category : #accessing }
+RTData >> developers: anObject [
+	developers := anObject
 ]
 
 { #category : #accessing }
@@ -75,8 +101,8 @@ RTData >> nbComponents [
 
 { #category : #accessing }
 RTData >> nbDevelopers [
-
-	^ nbDevelopers
+	nbDevelopers ifNotNil: [ ^ nbDevelopers ].
+	^ self developers size
 ]
 
 { #category : #accessing }
@@ -105,10 +131,20 @@ RTData >> publications: anObject [
 
 { #category : #accessing }
 RTData >> sourceCodeData [
-	^ sourceCodeData
+	"return more recent source code data"
+	| moreRecentDate |
+	moreRecentDate := (sourceCodeDataHistory keys asSortedCollection sort: [ :a :b | a < b ]) last.
+	^ sourceCodeDataHistory at: moreRecentDate
 ]
 
 { #category : #accessing }
-RTData >> sourceCodeData: anObject [
-	sourceCodeData := anObject
+RTData >> sourceCodeDataHistory [
+
+	sourceCodeDataHistory ifNil:[sourceCodeDataHistory := Dictionary new].
+	^ sourceCodeDataHistory
+]
+
+{ #category : #accessing }
+RTData >> sourceCodeDataHistory: anObject [
+	sourceCodeDataHistory := anObject
 ]

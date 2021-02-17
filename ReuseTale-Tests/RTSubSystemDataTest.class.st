@@ -15,6 +15,7 @@ RTSubSystemDataTest >> testSubSystemsDatas [
 	self assert: subSystem nbComponents equals: 1. 
 	self assert: subSystem nbClasses equals: 2.  
 	self assert: subSystem nbMethods equals: 10. 
-	 
+
+	self assert: subSystem developers asOrderedCollection isEmpty.
 	self assert: subSystem nbDevelopers equals: 1.
 ]

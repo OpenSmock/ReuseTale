@@ -13,12 +13,18 @@ RTPrototypeData class >> fromRawData: array [
 	| protoData |
 	protoData := self new.
 	protoData name: array first first.
-	protoData sourceCodeData: (RTSourceCodeData fromArray: array first).
-	2 to: array size do: [ :i | 
+	protoData firstVersionDate: ((array first at: 5) ifNotNil:[ :e | (DateAndTime fromStringDDMMYYYY: e)]).
+	protoData mostRecentVersionDate: ((array first at: 6) ifNotNil:[ :e | (DateAndTime fromStringDDMMYYYY: e)]).
+	(array first at: 7) ifNotNil:[ :e | (e splitOn: Character space) do:[ :f | f ifNotEmpty:[ protoData addDeveloper: f asNumber]]].
+	(array first at: 8) ifNotNil:[ :e | protoData publications: e asNumber].
+	protoData addSourceCodeData: (RTSourceCodeData fromArray: array first) dateTime: (protoData mostRecentVersionDate).
+	2 to: array size do: [ :i |  
 		| subSystem |
-		subSystem := RTPrototypeDataRepository subSystems at:
-			             (array at: i) first.
-		protoData addSubSystem: subSystem].
+		subSystem := RTPrototypeDataRepository subSystems at: (array at: i) first.
+		"update sub system datas"
+		subSystem addSourceCodeData: (RTSourceCodeData fromArray: (array at: i)) dateTime: (protoData mostRecentVersionDate).
+		protoData addSubSystem: subSystem
+	].
 	^ protoData
 ]
 
