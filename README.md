@@ -2,7 +2,7 @@
 
 ```Smalltalk
 Metacello new
-  repository: 'github://StevenCostiou/ReuseTale:main';
+  repository: 'github://OpenSmock/ReuseTale:main';
   baseline: 'ReuseTale';
   load.
  
