@@ -46,6 +46,24 @@ RTPrototypeData >> nbReusedMethods [
 	^self subSystems inject: 0 into: [ :sum :e | e sourceCodeData methods + sum ].
 ]
 
+{ #category : #statistics }
+RTPrototypeData >> nbTotalClasses [
+	
+	^self sourceCodeData classes + self nbReusedClasses
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbTotalComponents [
+	
+	^self sourceCodeData components + self nbReusedComponents 
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbTotalMethods [
+	
+	^self sourceCodeData methods + self nbReusedMethods
+]
+
 { #category : #printing }
 RTPrototypeData >> printOn: aStream [
 	aStream << self name
