@@ -1,10 +1,8 @@
 Class {
 	#name : #RTPrototypeData,
-	#superclass : #Object,
+	#superclass : #RTData,
 	#instVars : [
-		'name',
-		'subSystems',
-		'prototypeData'
+		'subSystems'
 	],
 	#category : #'ReuseTale-model'
 }
@@ -15,7 +13,7 @@ RTPrototypeData class >> fromRawData: array [
 	| protoData |
 	protoData := self new.
 	protoData name: array first first.
-	protoData prototypeData: (RTData fromArray: array first).
+	protoData sourceCodeData: (RTSourceCodeData fromArray: array first).
 	2 to: array size do: [ :i | 
 		| subSystem |
 		subSystem := RTPrototypeDataRepository subSystems at:
@@ -30,33 +28,9 @@ RTPrototypeData >> addSubSystem: aRTSubSystemData withData: aRTData [
 	self subSystems at: aRTSubSystemData put: aRTData
 ]
 
-{ #category : #accessing }
-RTPrototypeData >> name [
-
-	^ name
-]
-
-{ #category : #accessing }
-RTPrototypeData >> name: anObject [
-
-	name := anObject
-]
-
 { #category : #printing }
 RTPrototypeData >> printOn: aStream [
 	aStream << self name
-]
-
-{ #category : #accessing }
-RTPrototypeData >> prototypeData [
-
-	^ prototypeData
-]
-
-{ #category : #accessing }
-RTPrototypeData >> prototypeData: anObject [
-
-	prototypeData := anObject
 ]
 
 { #category : #accessing }

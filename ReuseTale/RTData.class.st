@@ -2,56 +2,95 @@ Class {
 	#name : #RTData,
 	#superclass : #Object,
 	#instVars : [
-		'components',
-		'classes',
-		'methods'
+		'name',
+		'sourceCodeData',
+		'publications',
+		'nbDevelopers',
+		'mostRecentVersionDate',
+		'firstVersionDate',
+		'description'
 	],
 	#category : #'ReuseTale-model'
 }
 
-{ #category : #'instance creation' }
-RTData class >> fromArray: array [
+{ #category : #accessing }
+RTData >> description [
 
-	| data |
-	data := self new.
-	data components: array second asNumber.
-	data classes: array third asNumber.
-	data classes: array fourth asNumber.
-	^ data
+	^ description
 ]
 
 { #category : #accessing }
-RTData >> classes [
+RTData >> description: anObject [
 
-	^ classes
+	description := anObject
 ]
 
 { #category : #accessing }
-RTData >> classes: anObject [
+RTData >> firstVersionDate [
 
-	classes := anObject
+	^ firstVersionDate
 ]
 
 { #category : #accessing }
-RTData >> components [
+RTData >> firstVersionDate: anObject [
 
-	^ components
+	firstVersionDate := anObject
 ]
 
 { #category : #accessing }
-RTData >> components: anObject [
+RTData >> mostRecentVersionDate [
 
-	components := anObject
+	^ mostRecentVersionDate
 ]
 
 { #category : #accessing }
-RTData >> methods [
+RTData >> mostRecentVersionDate: anObject [
 
-	^ methods
+	mostRecentVersionDate := anObject
 ]
 
 { #category : #accessing }
-RTData >> methods: anObject [
+RTData >> name [
 
-	methods := anObject
+	^ name
+]
+
+{ #category : #accessing }
+RTData >> name: anObject [
+
+	name := anObject
+]
+
+{ #category : #accessing }
+RTData >> nbDevelopers [
+
+	^ nbDevelopers
+]
+
+{ #category : #accessing }
+RTData >> nbDevelopers: anObject [
+
+	nbDevelopers := anObject
+]
+
+{ #category : #accessing }
+RTData >> publications [
+
+	^ publications
+]
+
+{ #category : #accessing }
+RTData >> publications: anObject [
+
+	publications := anObject
+]
+
+{ #category : #accessing }
+RTData >> sourceCodeData [
+	^ sourceCodeData
+]
+
+{ #category : #accessing }
+RTData >> sourceCodeData: anObject [
+	sourceCodeData := anObject
 ]
