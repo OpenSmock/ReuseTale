@@ -1,6 +1,6 @@
 Class {
 	#name : #RTPrototypeDataRepository,
-	#superclass : #Object,
+	#superclass : #Dictionary,
 	#classInstVars : [
 		'current'
 	],
@@ -47,7 +47,7 @@ RTPrototypeDataRepository class >> buildSubSystemsDataFromFilename: aFileReferen
 { #category : #accessing }
 RTPrototypeDataRepository class >> current [
 
-	^ current ifNil: [ current := Dictionary new ]
+	^ current ifNil: [ current := self new ]
 ]
 
 { #category : #'building ui' }
@@ -87,10 +87,7 @@ RTPrototypeDataRepository class >> openFileToBuildSubSystemsData [
 { #category : #accessing }
 RTPrototypeDataRepository class >> prototypes [
 	<script:'self prototypes inspect'>
-	^ self current at: #prototypes ifAbsentPut: [ 
-		  SortedCollection new
-			  sortBlock: [ :a :b | a name < b name ];
-			  yourself ]
+	^ self current prototypes
 ]
 
 { #category : #building }
@@ -102,5 +99,24 @@ RTPrototypeDataRepository class >> reset [
 { #category : #accessing }
 RTPrototypeDataRepository class >> subSystems [
 	<script:'self subSystems inspect'>
-	^ self current at: #subSystems ifAbsentPut: [ Dictionary new ]
+	^ self current subSystems
+]
+
+{ #category : #statistics }
+RTPrototypeDataRepository >> nbOfUsesForSubSystem: aSubSystemName [
+
+	^self prototypes inject: 0 into:[ :sum :proto | (proto usesSubSystem: aSubSystemName) ifTrue:[sum + 1] ifFalse:[sum] ].
+]
+
+{ #category : #private }
+RTPrototypeDataRepository >> prototypes [
+	^ self at: #prototypes ifAbsentPut: [ 
+		  SortedCollection new
+			  sortBlock: [ :a :b | a name < b name ];
+			  yourself ]
+]
+
+{ #category : #private }
+RTPrototypeDataRepository >> subSystems [
+	^ self at: #subSystems ifAbsentPut: [ Dictionary new ]
 ]

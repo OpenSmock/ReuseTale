@@ -47,21 +47,27 @@ RTPrototypeData >> nbReusedMethods [
 ]
 
 { #category : #statistics }
+RTPrototypeData >> nbSubSystems [
+	
+	^self subSystems size
+]
+
+{ #category : #statistics }
 RTPrototypeData >> nbTotalClasses [
 	
-	^self sourceCodeData classes + self nbReusedClasses
+	^self nbClasses + self nbReusedClasses
 ]
 
 { #category : #statistics }
 RTPrototypeData >> nbTotalComponents [
 	
-	^self sourceCodeData components + self nbReusedComponents 
+	^self nbComponents + self nbReusedComponents 
 ]
 
 { #category : #statistics }
 RTPrototypeData >> nbTotalMethods [
 	
-	^self sourceCodeData methods + self nbReusedMethods
+	^self nbMethods + self nbReusedMethods
 ]
 
 { #category : #printing }
@@ -73,4 +79,11 @@ RTPrototypeData >> printOn: aStream [
 RTPrototypeData >> subSystems [
 
 	^ subSystems ifNil: [ subSystems := SortedCollection sortBlock:[ :a :b | (a name) < (b name) ] ]
+]
+
+{ #category : #statistics }
+RTPrototypeData >> usesSubSystem: aSubSystemName [
+
+	^(self subSystems detect:[ :e | e name = aSubSystemName ] ifNone:[nil]) notNil. 
+	
 ]
