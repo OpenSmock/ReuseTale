@@ -48,6 +48,29 @@ RTPrototypeDataRepository class >> current [
 	^ current ifNil: [ current := self new ]
 ]
 
+{ #category : #accessing }
+RTPrototypeDataRepository class >> getPrototypesByYear [
+
+| min max dic |
+dic := Dictionary new.
+min := self prototypes first mostRecentVersionDate.
+max := self prototypes first mostRecentVersionDate.
+self prototypes do: [  :p | min > p mostRecentVersionDate ifTrue:[min := p mostRecentVersionDate]. max < p mostRecentVersionDate ifTrue:[max := p mostRecentVersionDate ]. ].
+
+min year to: max year do:[ :y |
+		dic at: y put:  (self prototypes select: [  :e | e mostRecentVersionDate year = y ]).
+	].
+^dic
+
+]
+
+{ #category : #accessing }
+RTPrototypeDataRepository class >> inspectPrototypesByYear [
+<script>
+self getPrototypesByYear inspect
+
+]
+
 { #category : #'building ui' }
 RTPrototypeDataRepository class >> openFileToBuildPrototypesData [
 
