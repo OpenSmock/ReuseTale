@@ -48,8 +48,9 @@ RTPrototypeDataRepository class >> current [
 	^ current ifNil: [ current := self new ]
 ]
 
-{ #category : #accessing }
+{ #category : #querying }
 RTPrototypeDataRepository class >> getPrototypesByYear [
+	<script: 'self getPrototypesByYear inspect'>
 
 | min max dic |
 dic := Dictionary new.
@@ -61,6 +62,14 @@ min year to: max year do:[ :y |
 		dic at: y put:  (self prototypes select: [  :e | e mostRecentVersionDate year = y ]).
 	].
 ^dic
+
+]
+
+{ #category : #querying }
+RTPrototypeDataRepository class >> getPrototypesFromOlderToMostRecent [
+	<script: 'self getPrototypesFromOlderToMostRecent inspect'>
+
+	^self prototypes asSortedCollection: [:a :b | a mostRecentVersionDate julianDayNumber < b mostRecentVersionDate julianDayNumber ].
 
 ]
 

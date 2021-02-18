@@ -4,7 +4,7 @@ Class {
 	#category : #'ReuseTale-model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> codeByDate [
 <script>
 | x y z r c p |
@@ -39,7 +39,42 @@ RTGraphs class >> codeByDate [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'subsystems graphs' }
+RTGraphs class >> nbOfUsedSubsystemsDuringYears [
+	<script>
+	| prototypes x chart nbPrototypes yNbUsedSubsystems lineNbUsedSubsystems |
+	prototypes := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	nbPrototypes := prototypes size.
+	
+	x := OrderedCollection new. "X : Each prototypes ordered by most recent year"
+	yNbUsedSubsystems := OrderedCollection new. "Y : Nb of used subsystems"
+	
+	prototypes do:[ :p |
+		x add: p mostRecentVersionDate julianDayNumber.
+		"Computing reuse source code percent"	
+		yNbUsedSubsystems add: p subSystems size.
+	].
+
+	"Create lines"
+	lineNbUsedSubsystems := RSBarPlot new x: x y: yNbUsedSubsystems.
+
+	chart := RSChart new.
+	chart addPlot: lineNbUsedSubsystems.
+	chart maxValueY: (RTPrototypeDataRepository subSystems size).
+	
+	"Chart style"
+	chart title: 'Nb of used subsystems during years'.
+	chart xlabel: 'Years' offset: 20.
+	chart ylabel: 'Nb'.
+	chart addDecoration: (RSHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year ]; numberOfTicks: nbPrototypes; yourself).
+	chart addDecoration: (RSVerticalTick new).
+	
+	"Open the Chart"
+	chart show.
+
+]
+
+{ #category : #graphs }
 RTGraphs class >> nbProtoByYearCumulated [
 <script>
 | x y  r c  nb p2   datas |
@@ -66,7 +101,7 @@ RTGraphs class >> nbProtoByYearCumulated [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseClassesAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -142,7 +177,7 @@ RTGraphs class >> nbReuseClassesAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseCompAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -218,7 +253,7 @@ RTGraphs class >> nbReuseCompAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseCompByYear [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -253,7 +288,7 @@ RTGraphs class >> nbReuseCompByYear [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseCompByYearCumulated [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -287,7 +322,7 @@ RTGraphs class >> nbReuseCompByYearCumulated [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseMethodsAndNewByYear [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -364,7 +399,7 @@ RTGraphs class >> nbReuseMethodsAndNewByYear [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> nbReuseMethodsAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -440,7 +475,50 @@ RTGraphs class >> nbReuseMethodsAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'reuse code percent graphs' }
+RTGraphs class >> notReusedInPercentDuringYears [
+	<script>
+	| prototypes x chart nbPrototypes lineComponents lineClasses lineMethods yComponentsInPercent yClassesInPercent yMethodsInPercent |
+	prototypes := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	nbPrototypes := prototypes size.
+	
+	x := OrderedCollection new. "X : Each prototypes ordered by most recent year"
+
+	yComponentsInPercent := OrderedCollection new. "Y : Percent of components"
+	yClassesInPercent := OrderedCollection new. "Y : Percent of classes"
+	yMethodsInPercent := OrderedCollection new. "Y : Percent of methods"
+	
+	prototypes do:[ :p |
+		x add: p mostRecentVersionDate julianDayNumber.
+		"Computing prototype source code percent"	
+		yComponentsInPercent add: ((p nbComponents * 100) / p nbTotalComponents).
+		yClassesInPercent add: ((p nbClasses * 100) / p nbTotalClasses).
+		yMethodsInPercent add: ((p nbMethods * 100) / p nbTotalMethods).
+	].
+
+	"Create lines"
+	lineComponents := RSLinePlot new x: x y: yComponentsInPercent.
+	lineClasses := RSLinePlot new x: x y: yClassesInPercent.
+	lineMethods := RSLinePlot new x: x y: yMethodsInPercent.
+
+	chart := RSChart new.
+	chart addPlot: lineComponents.
+	chart addPlot: lineClasses.
+	chart addPlot: lineMethods.
+	
+	"Chart style"
+	chart title: 'Percent of specific code during years'.
+	chart xlabel: 'Years' offset: 20.
+	chart ylabel: 'Reuse %'.
+	chart addDecoration: (RSHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year ]; numberOfTicks: nbPrototypes; yourself).
+	chart addDecoration: (RSVerticalTick new).
+	
+	"Open the Chart"
+	chart show.
+
+]
+
+{ #category : #graphs }
 RTGraphs class >> percentageReuseByDates [
 <script>
 | x y z r c p nb p2 sorted y2 |
@@ -449,7 +527,7 @@ RTGraphs class >> percentageReuseByDates [
 	z := OrderedCollection new.
 	y2 := OrderedCollection new.
 	r := Random new.
-	sorted := RTPrototypeDataRepository prototypes asSortedCollection: [:a :b | a mostRecentVersionDate julianDayNumber < b mostRecentVersionDate julianDayNumber ].
+	sorted := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	sorted do: [ :proto |
 		x add: proto mostRecentVersionDate julianDayNumber.
 		nb := (proto nbComponents = 0) ifTrue:[proto nbReusedComponents] ifFalse:[proto nbComponents].
@@ -481,7 +559,49 @@ RTGraphs class >> percentageReuseByDates [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'reuse code percent graphs' }
+RTGraphs class >> reuseInPercentDuringYears [
+	<script>
+	| prototypes x chart nbPrototypes yReuseComponentsInPercent yReuseClassesInPercent yReuseMethodsInPercent lineReuseComponents lineReuseClasses lineReuseMethods |
+	prototypes := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	nbPrototypes := prototypes size.
+	
+	x := OrderedCollection new. "X : Each prototypes ordered by most recent year"
+	yReuseComponentsInPercent := OrderedCollection new. "Y : Percent of reuse components"
+	yReuseClassesInPercent := OrderedCollection new. "Y : Percent of reuse classes"
+	yReuseMethodsInPercent := OrderedCollection new. "Y : Percent of reuse methods"
+	
+	prototypes do:[ :p |
+		x add: p mostRecentVersionDate julianDayNumber.
+		"Computing reuse source code percent"	
+		yReuseComponentsInPercent add: ((p nbReusedComponents * 100) / p nbTotalComponents).
+		yReuseClassesInPercent add: ((p nbReusedClasses * 100) / p nbTotalClasses).
+		yReuseMethodsInPercent add: ((p nbReusedMethods * 100) / p nbTotalMethods).
+	].
+
+	"Create lines"
+	lineReuseComponents := RSLinePlot new x: x y: yReuseComponentsInPercent.
+	lineReuseClasses := RSLinePlot new x: x y: yReuseClassesInPercent.
+	lineReuseMethods := RSLinePlot new x: x y: yReuseMethodsInPercent.
+
+	chart := RSChart new.
+	chart addPlot: lineReuseComponents.
+	chart addPlot: lineReuseClasses.
+	chart addPlot: lineReuseMethods.
+	
+	"Chart style"
+	chart title: 'Percent of reuse code during years'.
+	chart xlabel: 'Years' offset: 20.
+	chart ylabel: 'Reuse %'.
+	chart addDecoration: (RSHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year ]; numberOfTicks: nbPrototypes; yourself).
+	chart addDecoration: (RSVerticalTick new).
+	
+	"Open the Chart"
+	chart show.
+
+]
+
+{ #category : #'reuse code percent graphs' }
 RTGraphs class >> reuseLevelByYear [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -512,7 +632,7 @@ RTGraphs class >> reuseLevelByYear [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> reuseMethodsClassAndCompByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  color decoplot paintBlock p1 |
@@ -576,7 +696,7 @@ c addPlot: p3.
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> reusedClassesByDate [
 <script: 'self reusedClassesByDate'>
 | x y z r c p |
@@ -608,7 +728,7 @@ RTGraphs class >> reusedClassesByDate [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> reusedComponentsByDate [
 <script>
 | x y z r c p |
@@ -640,7 +760,7 @@ RTGraphs class >> reusedComponentsByDate [
 	c open
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #graphs }
 RTGraphs class >> reusedComponentsByNbOfClasses [
 <script>
 | x y z r c p |
@@ -670,4 +790,41 @@ RTGraphs class >> reusedComponentsByNbOfClasses [
 	c addDecoration: RSVerticalTick new.
 
 	c open
+]
+
+{ #category : #'subsystems graphs' }
+RTGraphs class >> subsystemsSizeDuringYears [
+	<script>
+	| subSystems chart nbSubSystems |
+	subSystems := RTPrototypeDataRepository subSystems.
+	nbSubSystems := subSystems size.
+
+	"Create chart"
+	chart := RSChart new.
+	
+	subSystems do:[ :ss | | line x y |
+		"Collect subsystem size evolution"
+		x := SortedCollection sortBlock:[ :a :b | a < b].
+		y := OrderedCollection new.
+		
+		ss sourceCodeDataHistory keysAndValuesDo: [ :dateTime :sourceCodeData |
+			x add: dateTime julianDayNumber.
+			y add: sourceCodeData components.
+		].
+		
+		"Create a lines for each subsystem"
+		line := RSLinePlot new x: x y: y.	
+		chart addPlot: line.
+	].
+
+	"Chart style"
+	chart title: 'Subsystems size (in components) during years'.
+	chart xlabel: 'Years' offset: 20.
+	chart ylabel: 'Nb Components'.
+	chart addDecoration: (RSHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year ]; numberOfTicks: nbSubSystems; yourself).
+	chart addDecoration: (RSVerticalTick new).
+	
+	"Open the Chart"
+	chart show.
+
 ]
