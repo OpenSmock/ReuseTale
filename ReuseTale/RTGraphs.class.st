@@ -795,7 +795,7 @@ RTGraphs class >> reusedComponentsByNbOfClasses [
 { #category : #'subsystems graphs' }
 RTGraphs class >> subsystemsSizeDuringYears [
 	<script>
-	| subSystems chart nbSubSystems |
+	| subSystems chart nbSubSystems ssKeys |
 	subSystems := RTPrototypeDataRepository subSystems.
 	nbSubSystems := subSystems size.
 
@@ -806,8 +806,10 @@ RTGraphs class >> subsystemsSizeDuringYears [
 		"Collect subsystem size evolution"
 		x := SortedCollection sortBlock:[ :a :b | a < b].
 		y := OrderedCollection new.
-		
-		ss sourceCodeDataHistory keysAndValuesDo: [ :dateTime :sourceCodeData |
+		ssKeys := ss sourceCodeDataHistory keys  sort: [ :a :b| a < b  ].
+		ssKeys do: [ :dateTime |
+			|sourceCodeData|
+			sourceCodeData := ss sourceCodeDataHistory at: dateTime.
 			x add: dateTime julianDayNumber.
 			y add: sourceCodeData components.
 		].
