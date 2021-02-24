@@ -632,6 +632,42 @@ RTGraphs class >> reuseLevelByYear [
 	c open
 ]
 
+{ #category : #'reuse code percent graphs' }
+RTGraphs class >> reuseLevelByYearSpecificCanvas [
+<script>
+| x y  r c  nb p p2   datas y2 nb2 canvas |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	y2 := OrderedCollection new.
+	r := Random new.
+	datas := RTPrototypeDataRepository getPrototypesByYear associations asSortedCollection: [ :a :b | a key < b key].
+
+	datas do: [ :dataList |
+		dataList value size = 0 ifFalse:[
+		nb := 0.
+		nb2 := 0.
+		x add: dataList key.
+		dataList value do: [ :proto | nb := nb + proto nbReusedComponents.
+				nb2 := nb2 + proto nbTotalComponents ].
+	
+		y add: (nb/nb2) *100]
+		 ].
+	c := RSChart new.
+	p := RSBarPlot new x: x y: y.
+	p color: Color blue.
+	c addPlot: p.
+
+	c addDecoration: (RSHorizontalTick new).
+	c addDecoration: (RSVerticalTick new ).
+
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 200@112.
+	c container: canvas.
+	c inspect.
+	c open
+]
+
 { #category : #graphs }
 RTGraphs class >> reuseMethodsClassAndCompByYearCumulated [
 <script>
