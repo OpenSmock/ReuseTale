@@ -828,6 +828,40 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 	c open
 ]
 
+{ #category : #'C Graph' }
+RTGraphs class >> reuseTacticalSubsystemInPrototypes [
+<script>
+| x y y2 datas previous c p canvas p2 lb set |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	previous := nil.
+	1 to: datas size do: [ :index |
+		x add: index.
+		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
+		set := Set new.
+		1 to: index-1 do: [:i | set addAll: (datas at: i) subSystems ].
+		y add: (((datas at: index) subSystems detect:[:e | e name = 'Subsystem 5'] ifNone:[nil]) ifNil:[0] ifNotNil: [ 1 ]).
+		previous := datas at: index. 
+		 ].
+	c := RSChart new.
+	p := RSBarPlot  new x: x y: y.
+	p color: Color blue.
+	c addPlot: p.
+	c maxValueY: 2.
+
+	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
+	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	c xlabel: 'Tactical View reuse in prototypes'.
+	
+	c open
+]
+
 { #category : #graphs }
 RTGraphs class >> reusedClassesByDate [
 <script: 'self reusedClassesByDate'>
