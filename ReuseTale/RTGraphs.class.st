@@ -92,7 +92,7 @@ RTGraphs class >> codeByDate [
 { #category : #'B Graph' }
 RTGraphs class >> componentEvolutionBySubsystems [
 <script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource manualTicks |
 
 	c := RSChart new.
 	
@@ -115,8 +115,65 @@ RTGraphs class >> componentEvolutionBySubsystems [
 		plots add: (colors at:index)->((datas at: index) name->p).
 		 ].
 	
+	
+	manualTicks := RSManualHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year]; useDiagonalLabel; numberOfTicks: 11; useNiceLabel ; yourself.
+	2010 to: 2021 do: [ :yr |
+		manualTicks addValue: (Date year: yr day: 1 ) julianDayNumber.
+		"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )."
+		 ].
+	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
+	c addDecoration: manualTicks.
+	c addDecoration: (RSVerticalTick new ).
+	
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
 
-	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 15; yourself ).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	plots do: [ :plt |
+		lb text: plt value key withBoxColor: plt key.
+	].
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location 
+		inner; bottom; right; offset: -25.
+	lb build.
+	
+	c ylabel: 'Nb. of components'.
+	c xlabel: 'Time'.
+	c open
+]
+
+{ #category : #'B Graph' }
+RTGraphs class >> componentEvolutionBySubsystems2 [
+<script>
+| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+
+	c := RSChart new.
+	
+	datas := RTPrototypeDataRepository subSystems values.
+	colors := Color wheel: datas size.
+	plots := OrderedCollection new.
+	1 to: datas size do: [ :index |
+		x := OrderedCollection new.
+		y := OrderedCollection new.
+		data := datas at: index.
+		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
+		dataSource do: [ :e |
+			x add: e key julianDayNumber.
+			y add: e value classes.
+		].
+		p := RSLinePlot new.
+		p x: x y: y.
+		p color: (colors at:index).
+		c addPlot: p.
+		plots add: (colors at:index)->((datas at: index) name->p).
+		 ].
+	
+
+	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 20; useNiceLabel; yourself ).
 	c addDecoration: (RSVerticalTick new ).
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
@@ -133,7 +190,107 @@ RTGraphs class >> componentEvolutionBySubsystems [
 		inner; bottom; right; offset: -25.
 	lb build.
 	
-	c ylabel: 'Nb. of components'.
+	c ylabel: 'Nb. of classes'.
+	c xlabel: 'Time'.
+	
+	c open
+]
+
+{ #category : #'B Graph' }
+RTGraphs class >> componentEvolutionBySubsystems3 [
+<script>
+| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+
+	c := RSChart new.
+	
+	datas := RTPrototypeDataRepository subSystems values.
+	colors := Color wheel: datas size.
+	plots := OrderedCollection new.
+	1 to: datas size do: [ :index |
+		x := OrderedCollection new.
+		y := OrderedCollection new.
+		data := datas at: index.
+		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
+		dataSource do: [ :e |
+			x add: e key julianDayNumber.
+			y add: e value classes.
+		].
+		p := RSLinePlot new.
+		p x: x y: y.
+		p color: (colors at:index).
+		c addPlot: p.
+		plots add: (colors at:index)->((datas at: index) name->p).
+		 ].
+	
+
+	c addDecoration: (RSHorizontalTick new useDiagonalLabel; numberOfTicks: 50; integer; doNotUseNiceLabel ; yourself ).
+	c addDecoration: (RSVerticalTick new ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	plots do: [ :plt |
+		lb text: plt value key withBoxColor: plt key.
+	].
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location 
+		inner; bottom; right; offset: -25.
+	lb build.
+	
+	c ylabel: 'Nb. of classes'.
+	c xlabel: 'Time'.
+	
+	c open
+]
+
+{ #category : #'B Graph' }
+RTGraphs class >> componentEvolutionBySubsystems4 [
+<script>
+| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+
+	c := RSChart new.
+	
+	datas := RTPrototypeDataRepository subSystems values.
+	colors := Color wheel: datas size.
+	plots := OrderedCollection new.
+	1 to: datas size do: [ :index |
+		x := OrderedCollection new.
+		y := OrderedCollection new.
+		data := datas at: index.
+		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
+		dataSource do: [ :e |
+			x add: e key julianDayNumber.
+			y add: e value classes.
+		].
+		p := RSLinePlot new.
+		p x: x y: y.
+		p color: (colors at:index).
+		c addPlot: p.
+		plots add: (colors at:index)->((datas at: index) name->p).
+		 ].
+	
+
+	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 50; doNotUseNiceLabel ; yourself ).
+	c addDecoration: (RSVerticalTick new ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	plots do: [ :plt |
+		lb text: plt value key withBoxColor: plt key.
+	].
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location 
+		inner; bottom; right; offset: -25.
+	lb build.
+	
+	c ylabel: 'Nb. of classes'.
 	c xlabel: 'Time'.
 	
 	c open
@@ -1095,4 +1252,88 @@ RTGraphs class >> subsystemsSizeDuringYears [
 	"Open the Chart"
 	chart show.
 
+]
+
+{ #category : #'E Graph' }
+RTGraphs class >> tacticalSubsystemChangesInTime [
+<script>
+| x y y2 datas previous c p canvas p2 lb set manualTicks decoplot color paint |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+
+	datas := (RTPrototypeDataRepository subSystems at: 'Subsystem 5') sourceCodeDataHistory associations asSortedCollection:[:a :b | a key < b key].
+	previous := nil.
+	1 to: datas size do: [ :index |
+		x add: (datas at: index) key julianDayNumber.
+		y add: (datas at: index) value components
+	].
+	c := RSChart new.
+	p := RSLinePlot   new x: x y: y; fmt: 'o'; yourself .
+	p color: Color blue lighter.
+	c addPlot: p.
+
+	decoplot := RSAreaPlot new x: x y1: y y2: 50.
+	paint := LinearGradientPaint fromArray: 
+		{0-> (Color blue lighter alpha: 0.3).
+		0.8 -> Color transparent}.
+	paint start: 0@ -100; stop: 0@ 100.
+	decoplot shape paint: paint.
+	c addPlot: decoplot.
+
+	"c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself)."
+	manualTicks := RSManualHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year]; useDiagonalLabel; numberOfTicks: 11 ; yourself.
+	2010 to: 2021 do: [ :yr |
+		manualTicks addValue: (Date year: yr day: 1 ) julianDayNumber.
+	].
+	c addDecoration: manualTicks.
+	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	c xlabel: 'Tactical View number of components in time'.
+	
+	c open
+]
+
+{ #category : #'D Graph' }
+RTGraphs class >> timeSpentInPrototypes [
+<script>
+| x y  datas  c p canvas   data y2 p2 lb |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	y2 := OrderedCollection new.
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	1 to: datas size do: [ :index |
+		x add: index.
+		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
+		data := (datas at: index).
+		y add: ((((data mostRecentVersionDate julianDayNumber - data firstVersionDate julianDayNumber) / data subSystems  size) / data developers size ) / (data publications ifNil:[1]) ) asFloat.
+		y2 add: data developers size.
+		].
+	c := RSChart new.
+	p := RSBarPlot  new x: x y: y.
+	p2 := RSLinePlot new x: x y: y2.
+	p2 color: Color red muchDarker.
+	p color: Color green muchDarker.
+	c addPlot: p.
+	c addPlot: p2.
+
+	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
+	c addDecoration: (RSVerticalTick new ).
+	
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	lb text: 'Days for publication by subsystems by develeopper' withBoxColor: p computeColor.
+	lb text: 'Number of developpers' withBoxColor: p2 computeColor.
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location offset: 200@40.
+	lb build.
+	
+	c open
 ]
