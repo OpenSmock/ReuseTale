@@ -39,6 +39,56 @@ RTGraphs class >> codeByDate [
 	c open
 ]
 
+{ #category : #'B Graph' }
+RTGraphs class >> componentEvolutionBySubsystems [
+<script>
+| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+
+	c := RSChart new.
+	
+	datas := RTPrototypeDataRepository subSystems values.
+	colors := Color wheel: datas size.
+	plots := OrderedCollection new.
+	1 to: datas size do: [ :index |
+		x := OrderedCollection new.
+		y := OrderedCollection new.
+		data := datas at: index.
+		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
+		dataSource do: [ :e |
+			x add: e key julianDayNumber.
+			y add: e value classes.
+		].
+		p := RSLinePlot new.
+		p x: x y: y.
+		p color: (colors at:index).
+		c addPlot: p.
+		plots add: (colors at:index)->((datas at: index) name->p).
+		 ].
+	
+
+	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 15; yourself ).
+	c addDecoration: (RSVerticalTick new ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	plots do: [ :plt |
+		lb text: plt value key withBoxColor: plt key.
+	].
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location 
+		inner; bottom; right; offset: -25.
+	lb build.
+	
+	c ylabel: 'Nb. of classes'.
+	c xlabel: 'Time'.
+	
+	c open
+]
+
 { #category : #'subsystems graphs' }
 RTGraphs class >> nbOfUsedSubsystemsDuringYears [
 	<script>
@@ -729,6 +779,52 @@ c addPlot: p3.
 	c addDecoration: (RSHorizontalTick new).
 	c addDecoration: (RSVerticalTick new ).
 
+	c open
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> reuseSubsystemsByPrototypes [
+<script>
+| x y y2 datas previous c p canvas p2 lb set |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	y2 := OrderedCollection new.
+	
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	previous := nil.
+	1 to: datas size do: [ :index |
+		x add: index.
+		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
+		set := Set new.
+		1 to: index-1 do: [:i | set addAll: (datas at: i) subSystems ].
+		y add: ((datas at: index) subSystems select:[:e | set includes: e]) size.
+		y2 add: (datas at: index) subSystems size.
+		previous := datas at: index. 
+		 ].
+	c := RSChart new.
+	p := RSBarPlot  new x: x y: y2.
+	p color: Color blue lighter.
+	c addPlot: p.
+	p2 := RSBarPlot  new x: x y: y.
+	p2 color: (Color blue muchDarker).
+	c addPlot: p2.
+
+	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
+	c addDecoration: (RSVerticalTick new ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	lb text: 'Nb. Subsystems' withBoxColor: p computeColor.
+	lb text: 'Reused Subsystems' withBoxColor: p2 computeColor.
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location 
+		inner; bottom; right; offset: -10.
+	lb build.
+	
 	c open
 ]
 
