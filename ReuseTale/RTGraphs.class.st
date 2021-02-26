@@ -1215,6 +1215,72 @@ RTGraphs class >> reusedComponentsByNbOfClasses [
 	c open
 ]
 
+{ #category : #'F Graph' }
+RTGraphs class >> subsystemsAndComponentsNumberInTime [
+<script>
+| x y  datas  c p canvas   data y2 p2 lb datas2 comps decoplot paint manualTicks previous |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	y2 := OrderedCollection new.
+	datas := RTPrototypeDataRepository getSubSystemsByYear.
+	datas keys asSortedCollection last+1 to: 2021 do: [ :i | datas at: i put: Array new ].
+	previous := 0.
+	datas associations do: [ :asso |
+		x add: (Date year: asso key day: 1) julianDayNumber.
+		(asso value size = 0) ifFalse: [previous := asso value size + previous. y add: previous.] ifTrue:[
+		y add: previous.
+		 ]].
+	datas2 := RTPrototypeDataRepository subSystems values.
+	datas2 do: [ :syst | 
+		comps := syst componentsNumberByYearFrom: datas keys asSortedCollection first to:  datas keys asSortedCollection last.
+			y2 isEmpty ifTrue:[ comps associations do: [  :a | y2 add: a value ]] ifFalse:[
+			comps associations doWithIndex:  [ :a :index | y2 at: index put: ((y2 at: index)+a value) ]]
+		 ].
+	
+	c := RSChart new.
+	p := RSBarPlot  new x: x y: y2; yourself .
+	p color: Color purple muchDarker .
+	c addPlot: p.
+	p2 := RSBarPlot  new x: x y: y*10; yourself .
+	p2 color: Color blue darker .
+	c addPlot: p2.
+
+	"p := RSLinePlot   new x: x y: y2; fmt: 'o'; yourself ."
+
+
+"	decoplot := RSAreaPlot new x: x y1: y2 y2: 50.
+	paint := LinearGradientPaint fromArray: 
+		{0-> (Color purple muchDarker alpha: 0.3).
+		0.8 -> Color transparent}.
+	paint start: 0@ -100; stop: 0@ 100.
+	decoplot shape paint: paint.
+	c addPlot: decoplot."
+
+	"c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself)."
+	manualTicks := RSManualHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year]; useDiagonalLabel; numberOfTicks: 11 ; yourself.
+	2007 to: 2021 do: [ :yr |
+		manualTicks addValue: (Date year: yr day: 1 ) julianDayNumber.
+	].
+	c addDecoration: manualTicks.
+	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400@((400*9)/16).
+	c container: canvas.
+	c xlabel: 'Subsystems and components in time'.
+	
+	lb := RSLegend new.
+	lb container: c canvas.
+	lb text: 'Number of components' withBoxColor: p computeColor.
+	lb text: 'Number of subsystems' withBoxColor: p2 computeColor.
+	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
+	lb location offset: 200@40.
+	lb build.
+	
+	c open
+
+]
+
 { #category : #'subsystems graphs' }
 RTGraphs class >> subsystemsSizeDuringYears [
 	<script>
