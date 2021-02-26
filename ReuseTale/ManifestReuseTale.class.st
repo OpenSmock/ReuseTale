@@ -1,24 +1,38 @@
 "
-""To load datas""
-""With UI""
-""#1 =>"" 
+## Import datas with DoIt 
+These scripts imports project data files (two .csv files in project root).
+
+""First file""
+RTPrototypeDataRepository reset.
+RTPrototypeDataRepository buildSubSystemsDataFromFilename: 'SubSystems_data.csv' asFileReference.
+
+""Second file""
+RTPrototypeDataRepository buildPrototypesDataFromFilename: 'Prototypes_data.csv' asFileReference.
+
+## Import datas with UI
+This is an UI to import your own files.
+
+""First file""
+RTPrototypeDataRepository reset.
 RTPrototypeDataRepository openFileToBuildSubSystemsData. 
-""#2 =>"" 
-RTPrototypeDataRepository openFileToBuildPrototypesData.
 
-""Manually""
-""#1 =>"" 
-RTPrototypeDataRepository buildSubSystemsDataFromFilename: 
-		'your\path\to\file\SubSystems_data.csv' asFileReference.
-""#2 =>"" 
-RTPrototypeDataRepository buildPrototypesDataFromFilename:
-		'your\path\to\file\Prototypes_data.csv' asFileReference.
+""Second file""
+RTPrototypeDataRepository openFileToBuildPrototypesData. 
 
-""To Inspect loaded datas :""
+## Inspect imported datas
+
+### Prototypes
+
 RTPrototypeDataRepository prototypes inspect.
 
-""To clean""
-RTPrototypeDataRepository clean.
+### SubSystems
+
+RTPrototypeDataRepository subSystems inspect.
+
+## Remove imported datas
+
+RTPrototypeDataRepository reset.
+
 "
 Class {
 	#name : #ManifestReuseTale,

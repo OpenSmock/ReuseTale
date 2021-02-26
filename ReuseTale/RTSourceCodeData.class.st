@@ -14,9 +14,9 @@ RTSourceCodeData class >> fromArray: array [
 
 	| data |
 	data := self new.
-	data components: array second asNumber.
-	data classes: array third asNumber.
-	data methods: array fourth asNumber.
+	data components: (array at: 2) asNumber.
+	data classes: (array at: 4) asNumber.
+	data methods: (array at: 5) asNumber.
 	^ data
 ]
 
