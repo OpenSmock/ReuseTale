@@ -4,6 +4,15 @@ Class {
 	#category : #'ReuseTale-model'
 }
 
+{ #category : #'custom shape - experimental' }
+RTGraphs class >> ELPRsBox [
+| tmp |
+tmp := RSBox newAnonymousSubclass.
+tmp compile: 'radius: aValue
+	^ self extent: 5 @ 5'.
+^tmp
+]
+
 { #category : #'B Graph' }
 RTGraphs class >> classesEvolutionBySubsystems [
 <script>
@@ -293,6 +302,80 @@ RTGraphs class >> componentEvolutionBySubsystems4 [
 	c ylabel: 'Nb. of classes'.
 	c xlabel: 'Time'.
 	
+	c open
+]
+
+{ #category : #'I Graph' }
+RTGraphs class >> expertiseInPrototypes [
+
+	<script>
+	| x y datas c p canvas lb z ymin ymax xmax tmp |
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	ymin := OrderedCollection new.
+	ymax := OrderedCollection new.
+	z := OrderedCollection new.
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	datas doWithIndex: [ :proto :index | 
+		proto developers do: [ :dev | 
+			x add: index.
+			y add: dev.
+			z add: 200 ] ].
+	c := RSChart new.
+	p := RSScatterPlot new
+		     x: x y: y;
+		     shape: self ELPRsBox new noPaint;
+		     yourself.
+	p color: Color blue lighter.
+
+	xmax := x copy.
+	xmax addFirst: 0.
+	xmax addLast: x last + 1.
+	xmax do: [ :val | 
+		ymin add: 0.5.
+		ymax add: 2.5 ].
+
+	c addPlot: (RSAreaPlot new
+			 x: xmax y1: ymin y2: ymax;
+			 color: Color green muchLighter;
+			 yourself).
+	c addPlot: p.
+
+
+	c addDecoration: (RSHorizontalTick new
+			 integer;
+			 " fromNames: (datas collect: [ :e | e name ]);"labelConversion: [ 
+				 :val | 
+				 tmp := datas at: val ifAbsent: [ nil ].
+				 tmp ifNil: [ '' ] ];
+			 numberOfTicks: datas size + 2;
+			 useDiagonalLabel;
+			 yourself).
+	c addDecoration: (RSVerticalTick new
+			 numberOfTicks: 12;
+			 yourself).
+	c maxValueY: 15.
+	c padding: 10 @ 0.
+
+	canvas := RSCanvas new.
+	canvas @ RSCanvasController.
+	c chartExtents extent: 400 @ (400 * 9 / 16).
+	c container: canvas.
+
+	lb := RSLegend new.
+	lb container: c canvas.
+	lb text: 'Expertise' withBoxColor: Color green muchLighter.
+	lb text: 'Developper' withBoxColor: Color blue.
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location offset: 200 @ 40.
+	lb build.
+
+	c ylabel: 'Developper ID'.
+
 	c open
 ]
 
