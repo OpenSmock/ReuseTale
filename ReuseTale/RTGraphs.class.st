@@ -1295,10 +1295,10 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypes [
 	p := RSBarPlot  new x: x y: y.
 	p color: Color blue.
 	c addPlot: p.
-	c maxValueY: 2.
+	c maxValueY: 1.
 
 	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
-	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
+	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 2; yourself ).
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
 	c chartExtents extent: 400@((400*9)/16).
