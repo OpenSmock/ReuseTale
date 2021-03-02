@@ -160,10 +160,7 @@ RTPrototypeDataRepository class >> subSystems [
 RTPrototypeDataRepository class >> subSystemsSortedByName [
 
 	^ self subSystems values sort: [ :a :b | 
-		|idA idB|
-		idA := a name readStream upTo: Character space; upToEnd.
-		idB := b name readStream upTo: Character space; upToEnd.		
-		idA asNumber < idB asNumber ]
+		  a id asNumber < b id asNumber ]
 ]
 
 { #category : #statistics }
