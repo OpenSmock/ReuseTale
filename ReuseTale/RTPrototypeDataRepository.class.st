@@ -156,6 +156,16 @@ RTPrototypeDataRepository class >> subSystems [
 	^ self current subSystems
 ]
 
+{ #category : #accessing }
+RTPrototypeDataRepository class >> subSystemsSortedByName [
+
+	^ self subSystems values sort: [ :a :b | 
+		|idA idB|
+		idA := a name readStream upTo: Character space; upToEnd.
+		idB := b name readStream upTo: Character space; upToEnd.		
+		idA asNumber < idB asNumber ]
+]
+
 { #category : #statistics }
 RTPrototypeDataRepository >> nbOfUsesForSubSystem: aSubSystemName [
 

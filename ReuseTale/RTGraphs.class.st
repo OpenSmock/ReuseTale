@@ -58,7 +58,7 @@ RTGraphs class >> classesEvolutionBySubsystems [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -163,7 +163,7 @@ RTGraphs class >> componentEvolutionBySubsystems [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -220,7 +220,7 @@ RTGraphs class >> componentEvolutionBySubsystems2 [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -270,7 +270,7 @@ RTGraphs class >> componentEvolutionBySubsystems3 [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -320,7 +320,7 @@ RTGraphs class >> componentEvolutionBySubsystems4 [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -444,7 +444,7 @@ RTGraphs class >> methodEvolutionBySubsystems [
 
 	c := RSChart new.
 	
-	datas := RTPrototypeDataRepository subSystems values.
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
 	1 to: datas size do: [ :index |
@@ -1419,7 +1419,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 		(asso value size = 0) ifFalse: [previous := asso value size + previous. y add: previous.] ifTrue:[
 		y add: previous.
 		 ]].
-	datas2 := RTPrototypeDataRepository subSystems values.
+	datas2 := RTPrototypeDataRepository subSystemsSortedByName.
 	datas2 do: [ :syst | 
 		comps := syst componentsNumberByYearFrom: datas keys asSortedCollection first to:  datas keys asSortedCollection last.
 			y2 isEmpty ifTrue:[ comps associations do: [  :a | y2 add: a value ]] ifFalse:[
