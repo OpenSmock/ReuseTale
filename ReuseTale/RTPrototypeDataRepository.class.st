@@ -67,10 +67,13 @@ min year to: max year do:[ :y |
 
 { #category : #querying }
 RTPrototypeDataRepository class >> getPrototypesFromOlderToMostRecent [
+
 	<script: 'self getPrototypesFromOlderToMostRecent inspect'>
-
-	^self prototypes asSortedCollection: [:a :b | a mostRecentVersionDate julianDayNumber < b mostRecentVersionDate julianDayNumber ].
-
+	^ self prototypes asSortedCollection: [ :a :b | 
+		  a mostRecentVersionDate julianDayNumber
+		  < b mostRecentVersionDate julianDayNumber or: [ 
+			  a mostRecentVersionDate julianDayNumber
+			  = b mostRecentVersionDate julianDayNumber and: [ a name < b name ] ] ]
 ]
 
 { #category : #querying }
