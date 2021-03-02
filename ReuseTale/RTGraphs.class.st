@@ -179,7 +179,7 @@ RTGraphs class >> componentEvolutionBySubsystems [
 		p x: x y: y.
 		p color: (colors at:index).
 		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
+		plots add: (colors at:index)->((datas at: index) idWithName->p).
 		 ].
 	
 	
@@ -209,7 +209,7 @@ RTGraphs class >> componentEvolutionBySubsystems [
 	lb build.
 	
 	c ylabel: 'Nb. of components'.
-	c xlabel: 'Time'.
+	c xlabel: 'Years'.
 	c open
 ]
 
