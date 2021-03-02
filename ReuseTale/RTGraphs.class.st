@@ -13,6 +13,44 @@ tmp compile: 'radius: aValue
 ^tmp
 ]
 
+{ #category : #'A Graph' }
+RTGraphs class >> averageLatexTable [
+
+	<script>
+	| datas stream averageNewComponentsPerPrototypes averageReusedComponentsPerPrototypes averageNewClassesPerPrototypes averageReusedClassesPerPrototypes averageComponentsPerPrototypes averageClassesPerPrototypes |
+	
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	
+	averageNewComponentsPerPrototypes := (datas collect:[:p| p nbNewComponents]) average.
+	averageReusedComponentsPerPrototypes := (datas collect:[:p| p nbReusedComponents]) average.
+	averageNewClassesPerPrototypes := (datas collect:[:p| p nbNewClasses]) average.
+	averageReusedClassesPerPrototypes := (datas collect:[:p| p nbReusedClasses]) average.
+	averageComponentsPerPrototypes := (datas collect:[:p| p nbTotalComponents]) average.	
+	averageClassesPerPrototypes := (datas collect:[:p| p nbTotalClasses]) average.	
+	
+	stream := WriteStream on: String new.
+	stream << self openAverageLatexTable.
+	stream << 'Average new code & '.
+	stream << (averageNewComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
+	stream << ' & '.
+	stream << (averageNewClassesPerPrototypes asFloat roundUpTo: 0.01) printString.	
+	stream << '\\'.
+	
+	stream << 'Average reused code & '.
+	stream << (averageReusedComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
+	stream << ' & '.
+	stream << (averageReusedClassesPerPrototypes asFloat roundUpTo: 0.01) printString.	
+	stream << '\\'.
+	
+	stream << 'Total & '.
+	stream << (averageComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
+	stream << ' & '.
+	stream << (averageClassesPerPrototypes asFloat roundUpTo: 0.01) printString.
+
+	stream << self closeAverageLatexTable.
+	stream contents inspect
+]
+
 { #category : #'B Graph' }
 RTGraphs class >> classesEvolutionBySubsystems [
 <script>
@@ -61,6 +99,26 @@ RTGraphs class >> classesEvolutionBySubsystems [
 	c xlabel: 'Time'.
 	
 	c open
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> closeAverageLatexTable [
+	^'
+\end{tabular}
+\caption{}
+\label{table:component-reuse-average}
+\end{table}
+'
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> closeFullStatisticsLatexTable [
+	^'
+\end{tabular}
+\caption{}
+\label{table:component-reuse}
+\end{table}
+'
 ]
 
 { #category : #graphs }
@@ -906,6 +964,54 @@ RTGraphs class >> notReusedInPercentDuringYears [
 	"Open the Chart"
 	chart show.
 
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> openAverageLatexTable [
+	^'
+\begin{table}[]
+\centering
+\begin{tabular}{lll}
+	 &
+	\textit{Components} &	
+	\textit{Classes}\\
+'
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> openFullStatisticsLatexTable [
+	^'
+\definecolor{Gray}{gray}{0.9}
+\begin{table}[]
+\centering
+\begin{tabular}{llll}
+	\textit{Pty.} &
+	\textit{Ssy.} &
+	\textit{Components} &	
+	\textit{Classes}\\
+'
+]
+
+{ #category : #'A Graph' }
+RTGraphs class >> overallLatexTable [
+
+	<script>
+	| datas stream counter |
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	stream := WriteStream on: String new.
+	stream << self openFullStatisticsLatexTable.
+
+	counter := 0.
+	datas do: [ :prototype | 
+		stream cr.
+		stream
+		<< (prototype fullStatisticsLatexLineColoredAs: (counter even
+					  ifTrue: [ 'Gray' ]
+					  ifFalse: [ nil ])).
+		counter := counter + 1 ].
+
+	stream << self closeFullStatisticsLatexTable.
+	stream contents inspect
 ]
 
 { #category : #graphs }

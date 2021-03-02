@@ -35,6 +35,59 @@ RTPrototypeData >> addSubSystem: aRTSubSystem [
 ]
 
 { #category : #statistics }
+RTPrototypeData >> fullStatisticsLatexLineColoredAs: colorName [
+	|stream|
+	stream := WriteStream on: String new.
+	colorName ifNotNil:[
+		stream << '\rowcolor{'.
+		stream << colorName.
+		stream << '}'.].
+	stream << self name last asString. 
+	stream << ' & '.
+	stream << self nbSubSystems printString.
+	stream << ' & '.
+	stream << self nbNewComponents printString. 
+	stream << ' new ('.
+	stream << (self print: self percentOfNewComponents limited: 5).
+	stream << '\%) & '.
+	stream << self nbNewClasses printString. 
+	stream << ' new ('.
+	stream << (self print: self percentOfNewClasses limited: 5).
+	stream << '\%)'.	
+	stream << ' \\'. 
+	stream cr.
+	
+	colorName ifNotNil:[
+		stream << '\rowcolor{'.
+		stream << colorName.
+		stream << '}'.].
+	stream << ' & & '. 
+	stream << self nbReusedComponents printString. 
+	stream << ' reused ('.
+	stream << (self print: self percentOfReusedComponents limited: 5).
+	stream << '\%) & '.
+	stream << self nbReusedClasses printString. 
+	stream << ' reused ('.
+	stream << (self print: self percentOfReusedClasses limited: 5).
+	stream << '\%)'.
+	stream << ' \\'.
+	^stream contents
+
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbNewClasses [
+
+	^ self nbTotalClasses - self nbReusedClasses
+]
+
+{ #category : #statistics }
+RTPrototypeData >> nbNewComponents [
+
+	^ self nbTotalComponents - self nbReusedComponents
+]
+
+{ #category : #statistics }
 RTPrototypeData >> nbReusedClasses [
 
 	^self subSystems inject: 0 into: [ :sum :e | (e getSourceCodeDataHistoryAtDateTime: self mostRecentVersionDate) classes + sum ].
@@ -76,9 +129,53 @@ RTPrototypeData >> nbTotalMethods [
 	^self nbMethods + self nbReusedMethods
 ]
 
+{ #category : #statistics }
+RTPrototypeData >> percentOfNewClasses [
+
+	^ ((self nbNewClasses /  self nbTotalClasses) asFloat * 100) roundDownTo: 0.01 
+]
+
+{ #category : #statistics }
+RTPrototypeData >> percentOfNewComponents [
+
+	^ ((self nbNewComponents /  self nbTotalComponents) asFloat * 100) roundDownTo: 0.01
+]
+
+{ #category : #statistics }
+RTPrototypeData >> percentOfReusedClasses [
+
+	^ ((self nbReusedClasses /  self nbTotalClasses) asFloat * 100 )roundDownTo: 0.01 
+]
+
+{ #category : #statistics }
+RTPrototypeData >> percentOfReusedComponents [
+
+	^ ((self nbReusedComponents /  self nbTotalComponents) asFloat * 100) roundDownTo: 0.01
+]
+
+{ #category : #printing }
+RTPrototypeData >> print: anObject limited: limit [
+
+	^ self
+		  printStringLimitedTo: limit
+		  using: [ :s | anObject printOn: s ]
+]
+
 { #category : #printing }
 RTPrototypeData >> printOn: aStream [
 	aStream << self name
+]
+
+{ #category : #printing }
+RTPrototypeData >> printStringLimitedTo: limit using: printBlock [
+
+	"Answer a String whose characters are a description of the receiver
+	produced by given printBlock. It ensures the result will be not bigger than given limit"
+
+	| limitedString |
+	limitedString := String streamContents: printBlock limitedTo: limit.
+	limitedString size < limit ifTrue: [ ^ limitedString ].
+	^ limitedString
 ]
 
 { #category : #accessing }
