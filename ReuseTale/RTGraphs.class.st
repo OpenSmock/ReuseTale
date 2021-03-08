@@ -158,59 +158,74 @@ RTGraphs class >> codeByDate [
 
 { #category : #'B Graph' }
 RTGraphs class >> componentEvolutionBySubsystems [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource manualTicks |
 
+	<script>
+	| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource manualTicks |
 	c := RSChart new.
-	
+
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
-	1 to: datas size do: [ :index |
+	1 to: datas size do: [ :index | 
 		x := OrderedCollection new.
 		y := OrderedCollection new.
 		data := datas at: index.
-		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
-		dataSource do: [ :e |
+		dataSource := data sourceCodeDataHistory associations 
+			              asSortedCollection: [ :a :b | 
+			              a key julianDayNumber < b key julianDayNumber ].
+		dataSource do: [ :e | 
 			x add: e key julianDayNumber.
-			y add: e value components.
-		].
+			y add: e value components ].
 		p := RSLinePlot new.
 		p x: x y: y.
-		p color: (colors at:index).
+		p color: (colors at: index).
 		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) idWithName->p).
-		 ].
-	
-	
-	manualTicks := RSManualHorizontalTick new labelConversion: [ :val | (Date julianDayNumber: val) year]; useDiagonalLabel; numberOfTicks: 11; useNiceLabel ; yourself.
-	2010 to: 2021 do: [ :yr |
-		manualTicks addValue: (Date year: yr day: 1 ) julianDayNumber.
-		"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )."
-		 ].
+		plots add: (colors at: index) -> ((datas at: index) idWithName -> p) ].
+
+
+	manualTicks := RSManualHorizontalTick new
+		               labelConversion: [ :val | 
+			               (Date julianDayNumber: val) year ];
+		               useDiagonalLabel;
+		               numberOfTicks: 11;
+		               useNiceLabel;
+		               yourself.
+	2010 to: 2021 do: [ :yr | 
+		manualTicks addValue: (Date year: yr day: 1) julianDayNumber
+		"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )." ].
 	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
 	c addDecoration: manualTicks.
-	c addDecoration: (RSVerticalTick new ).
-	
+	c addDecoration: RSVerticalTick new.
+
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
+	"canvas @ RSCanvasController."
+	c chartExtents extent: 400 @ (400 * 9 / 16).
 
 	c container: canvas.
-	
+
 	lb := RSLegend new.
 	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
+	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location
+		inner;
+		bottom;
+		right;
+		offset: -25.
 	lb build.
-	
+
 	c ylabel: 'Nb. of components'.
 	c xlabel: 'Years'.
-	c open
+	c open.
+
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig8.pdf' asFileReference
 ]
 
 { #category : #'B Graph' }
@@ -416,7 +431,7 @@ RTGraphs class >> expertiseInPrototypes [
 	c padding: 10 @ 0.
 
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
+"	canvas @ RSCanvasController."
 	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
 
@@ -434,7 +449,12 @@ RTGraphs class >> expertiseInPrototypes [
 
 	c ylabel: 'Developper ID'.
 
-	c open
+	c open.
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig13.pdf' asFileReference
+
 ]
 
 { #category : #'B Graph' }
@@ -1300,12 +1320,17 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypes [
 	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
 	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 2; yourself ).
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
+	"canvas @ RSCanvasController."
 	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	c xlabel: 'Tactical View reuse in prototypes'.
 	
-	c open
+	c open.
+	
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig9.pdf' asFileReference
 ]
 
 { #category : #graphs }
@@ -1453,10 +1478,10 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	c addDecoration: manualTicks.
 	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
+"	canvas @ RSCanvasController."
 	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
-	c xlabel: 'Subsystems and components in time'.
+"	c xlabel: 'Subsystems and components in time'."
 	
 	lb := RSLegend new.
 	lb container: c canvas.
@@ -1466,7 +1491,11 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	lb location offset: 200@40.
 	lb build.
 	
-	c open
+	c open.
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig12.pdf' asFileReference
 
 ]
 
@@ -1543,12 +1572,17 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 	c addDecoration: manualTicks.
 	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 3; yourself ).
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
+	"canvas @ RSCanvasController."
 	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	c xlabel: 'Tactical View number of components in time'.
 	
-	c open
+	c open.
+	
+RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig11.pdf' asFileReference
 ]
 
 { #category : #'D Graph' }
@@ -1578,7 +1612,7 @@ RTGraphs class >> timeSpentInPrototypes [
 	c addDecoration: (RSVerticalTick new ).
 	
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
+	"canvas @ RSCanvasController."
 	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	
@@ -1590,5 +1624,10 @@ RTGraphs class >> timeSpentInPrototypes [
 	lb location offset: 200@40.
 	lb build.
 	
-	c open
+	c open.
+	
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig10.pdf' asFileReference
 ]
