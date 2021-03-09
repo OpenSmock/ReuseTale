@@ -235,3 +235,18 @@ RTData >> sourceCodeDataHistory [
 RTData >> sourceCodeDataHistory: anObject [
 	sourceCodeDataHistory := anObject
 ]
+
+{ #category : #accessing }
+RTData >> years [
+
+	| stream firstYear|
+	self firstVersionDate year = self mostRecentVersionDate year ifTrue: [ 
+		^ self firstVersionDate year printString ].
+	stream := WriteStream on: String new.
+	firstYear := (self firstVersionDate year - 2000).
+	firstYear < 10 ifTrue: [ stream << 0 printString.].
+	stream << firstYear printString.
+	stream << '/'.
+	stream << (self mostRecentVersionDate year - 2000) printString.
+	^ stream contents
+]

@@ -127,7 +127,11 @@ Values are rounded to hundredths.}
 RTGraphs class >> closeFullStatisticsLatexTable [
 	^'
 \end{tabular}
-\caption{}
+\caption{24 prototypes (\textit{Pty}) from 2007 to 2021.
+For each prototype, 
+the first line shows the number of subsystems (\textit{Ssy}) used by the prototype, and the number of new components and new classes specifically developed for that prototype.
+The second line shows the years during which the prototype was (or is) maintained, then the number of reused components and classes for that prototype.
+Reused components and classes come from the subsystems used to build the prototype.}
 \label{table:component-reuse}
 \end{table}
 '
@@ -1016,7 +1020,7 @@ RTGraphs class >> openFullStatisticsLatexTable [
 \definecolor{Gray}{gray}{0.9}
 \begin{table}[]
 \centering
-\begin{tabular}{llll}
+\begin{tabular}{p{1cm}p{0.1cm}ll}
 	\textit{Pty.} &
 	\textit{Ssy.} &
 	\textit{Components} &	
@@ -1036,10 +1040,11 @@ RTGraphs class >> overallLatexTable [
 	counter := 0.
 	datas do: [ :prototype | 
 		stream cr.
-		stream
-		<< (prototype fullStatisticsLatexLineColoredAs: (counter even
+		stream << (prototype
+			 fullStatisticsLatexLineColoredAs: (counter even
 					  ifTrue: [ 'Gray' ]
-					  ifFalse: [ nil ])).
+					  ifFalse: [ nil ])
+			 counter: counter + 1).
 		counter := counter + 1 ].
 
 	stream << self closeFullStatisticsLatexTable.

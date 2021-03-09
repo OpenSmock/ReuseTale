@@ -35,21 +35,24 @@ RTPrototypeData >> addSubSystem: aRTSubSystem [
 ]
 
 { #category : #statistics }
-RTPrototypeData >> fullStatisticsLatexLineColoredAs: colorName [
+RTPrototypeData >> fullStatisticsLatexLineColoredAs: colorName counter: counter [
 	|stream|
 	stream := WriteStream on: String new.
 	colorName ifNotNil:[
 		stream << '\rowcolor{'.
 		stream << colorName.
 		stream << '}'.].
+	stream << '('.
+	stream << counter printString.
+	stream << ') '.
 	stream << self name last asString. 
-	stream << ' & '.
+	stream << '& '.
 	stream << self nbSubSystems printString.
-	stream << ' & '.
+	stream << '& '.
 	stream << self nbNewComponents printString. 
 	stream << ' new ('.
 	stream << (self print: self percentOfNewComponents limited: 5).
-	stream << '\%) & '.
+	stream << '\%)& '.
 	stream << self nbNewClasses printString. 
 	stream << ' new ('.
 	stream << (self print: self percentOfNewClasses limited: 5).
@@ -61,7 +64,9 @@ RTPrototypeData >> fullStatisticsLatexLineColoredAs: colorName [
 		stream << '\rowcolor{'.
 		stream << colorName.
 		stream << '}'.].
-	stream << ' & & '. 
+	stream << '\textit{'.
+	stream << self years.
+	stream << '} & & '. 
 	stream << self nbReusedComponents printString. 
 	stream << ' reused ('.
 	stream << (self print: self percentOfReusedComponents limited: 5).
