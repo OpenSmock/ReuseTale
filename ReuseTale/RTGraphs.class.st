@@ -32,17 +32,28 @@ RTGraphs class >> averageLatexTable [
 	stream << self openAverageLatexTable.
 	stream << 'Average new code & '.
 	stream << (averageNewComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
-	stream << ' & '.
+	stream << ' ('.
+	stream << ((averageNewComponentsPerPrototypes/averageComponentsPerPrototypes) asFloat roundUpTo: 0.01) printString.
+	stream << '\%) & '.
+	
 	stream << (averageNewClassesPerPrototypes asFloat roundUpTo: 0.01) printString.	
-	stream << '\\'.
+	stream << ' ('.
+	stream << ((averageNewClassesPerPrototypes/averageClassesPerPrototypes) asFloat roundUpTo: 0.01) printString.
+	stream << '\%)\\'.
+	stream cr.
 	
 	stream << 'Average reused code & '.
 	stream << (averageReusedComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
-	stream << ' & '.
-	stream << (averageReusedClassesPerPrototypes asFloat roundUpTo: 0.01) printString.	
-	stream << '\\'.
+	stream << ' ('.
+	stream << ((averageReusedComponentsPerPrototypes/averageComponentsPerPrototypes) asFloat roundUpTo: 0.01) printString.
+	stream << '\%) & '.
+	stream << (averageReusedClassesPerPrototypes asFloat roundUpTo: 0.01) printString.
+	stream << ' ('.
+	stream << ((averageReusedClassesPerPrototypes/averageClassesPerPrototypes) asFloat roundUpTo: 0.01) printString.
+	stream << '\%)\\'.
+	stream cr.
 	
-	stream << 'Total & '.
+	stream << 'Average code & '.
 	stream << (averageComponentsPerPrototypes asFloat roundUpTo: 0.01) printString.
 	stream << ' & '.
 	stream << (averageClassesPerPrototypes asFloat roundUpTo: 0.01) printString.
@@ -105,7 +116,8 @@ RTGraphs class >> classesEvolutionBySubsystems [
 RTGraphs class >> closeAverageLatexTable [
 	^'
 \end{tabular}
-\caption{}
+\caption{Average code (components and classes) per prototype over 15 years (computed from Table~\ref{table:component-reuse}). 
+Values are rounded to hundredths.}
 \label{table:component-reuse-average}
 \end{table}
 '
