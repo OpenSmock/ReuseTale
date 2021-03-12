@@ -1662,7 +1662,7 @@ RTGraphs class >> reusedComponentsByNbOfClasses [
 RTGraphs class >> subsystemsAndComponentsNumberInTime [
 
 	<script>
-	| x y datas c p canvas data y2 p2 lb datas2 comps decoplot paint manualTicks previous |
+	| x y datas c p canvas data y2 p2 lb datas2 comps decoplot paint manualTicks previous lb2 |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
@@ -1695,11 +1695,12 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 		     yourself.
 	p color: Color purple muchDarker.
 	c addPlot: p.
-	"p2 := RSBarPlot new
+	p2 := RSLinePlot new
 		      x: x y: y * 10;
+		      fmt: 'o';
 		      yourself.
-	p2 color: Color blue darker.
-	c addPlot: p2."
+	p2 color: Color green.
+	c addPlot: p2.
 
 	"p := RSLinePlot   new x: x y: y2; fmt: 'o'; yourself ."
 
@@ -1730,6 +1731,13 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 			 integer;
 			 numberOfTicks: 10;
 			 yourself).
+	c addDecoration: (RSVerticalRightTick new
+			 integer;
+			 values: (1 to: 800);
+			 numberOfTicks: 6;
+			 color: Color green;
+			 labelConversion: [ :e | e / 10 ];
+			 yourself).
 	canvas := RSCanvas new.
 	"	canvas @ RSCanvasController."
 	c chartExtents extent: 400 @ (400 * 9 / 16).
@@ -1739,14 +1747,23 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	lb := RSLegend new.
 	lb container: c canvas.
 	lb text: 'Number of components' withBoxColor: p computeColor.
-	"lb text: 'Number of subsystems' withBoxColor: p2 computeColor."
+	lb text: 'Number of subsystems' withBoxColor: p2 computeColor.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location offset: 200 @ 40.
+	lb location
+		inner;
+		bottom;
+		left;
+		offset: 50 @ -150.
 	lb build.
+
+	lb2 := RSLegend new.
+	lb2 container: c canvas.
+
+
 	canvas @ RSZoomableCanvas.
 	canvas @ RSDraggableCanvas.
 
