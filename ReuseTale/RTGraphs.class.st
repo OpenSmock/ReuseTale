@@ -236,6 +236,9 @@ RTGraphs class >> componentEvolutionBySubsystems [
 
 	c ylabel: 'Nb. of components'.
 	c xlabel: 'Years'.
+	canvas @ RSDraggableCanvas.
+	canvas @ RSZoomableCanvas.
+
 	c open.
 
 	RSPDFExporter new
@@ -1165,39 +1168,65 @@ RTGraphs class >> reuseLevelByYear [
 	c open
 ]
 
-{ #category : #'reuse code percent graphs' }
+{ #category : #'D Graph' }
 RTGraphs class >> reuseLevelByYearSpecificCanvas [
-<script>
-| x y  r c  nb p p2   datas y2 nb2 canvas |
+
+	<script>
+	| x y r c nb p datas y2 nb2 canvas manualTicks lb |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
 	r := Random new.
-	datas := RTPrototypeDataRepository getPrototypesByYear associations asSortedCollection: [ :a :b | a key < b key].
+	datas := RTPrototypeDataRepository getPrototypesByYear associations 
+		         asSortedCollection: [ :a :b | a key < b key ].
 
-	datas do: [ :dataList |
-		dataList value size = 0 ifFalse:[
-		nb := 0.
-		nb2 := 0.
-		x add: dataList key.
-		dataList value do: [ :proto | nb := nb + proto nbReusedComponents.
+	datas do: [ :dataList | 
+		dataList value size = 0 ifFalse: [ 
+			nb := 0.
+			nb2 := 0.
+			x add: dataList key.
+			dataList value do: [ :proto | 
+				nb := nb + proto nbReusedComponents.
 				nb2 := nb2 + proto nbTotalComponents ].
-	
-		y add: (nb/nb2) *100]
-		 ].
+
+			y add: nb / nb2 * 100 ] ].
 	c := RSChart new.
-	p := RSBarPlot new x: x y: y.
+	p := RSLinePlot new x: x y: y.
 	p color: Color blue.
 	c addPlot: p.
 
-	c addDecoration: (RSHorizontalTick new).
-	c addDecoration: (RSVerticalTick new ).
+	manualTicks := RSManualHorizontalTick new
+		               useDiagonalLabel;
+		               numberOfTicks: 11;
+		               useNiceLabel;
+		               yourself.
+	2010 to: 2021 do: [ :yr | manualTicks addValue: yr ].
+	"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )."
+	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
+	c addDecoration: manualTicks.
+	c addDecoration: RSVerticalTick new.
 
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 200@112.
+	canvas @ RSZoomableCanvas.
+	canvas @ RSDraggableCanvas.
+
+	c chartExtents extent: 200 @ 112.
 	c container: canvas.
-	c inspect.
+
+	lb := RSLegend new.
+	lb container: canvas.
+	lb text: '% of reused components' withBoxColor: p computeColor.
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location
+		bottom;
+		center;
+		offset: 80 @ 30.
+	lb build.
+
 	c open
 ]
 
@@ -1313,37 +1342,111 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 
 { #category : #'C Graph' }
 RTGraphs class >> reuseTacticalSubsystemInPrototypes [
-<script>
-| x y y2 datas previous c p canvas p2 lb set |
+
+	<script>
+	| x y y2 datas previous c p canvas p2 lb set |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	previous := nil.
-	1 to: datas size do: [ :index |
+	1 to: datas size do: [ :index | 
 		x add: index.
 		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
 		set := Set new.
-		1 to: index-1 do: [:i | set addAll: (datas at: i) subSystems ].
-		y add: (((datas at: index) subSystems detect:[:e | e name = 'Subsystem 5'] ifNone:[nil]) ifNil:[0] ifNotNil: [ 1 ]).
-		previous := datas at: index. 
-		 ].
+		1 to: index - 1 do: [ :i | set addAll: (datas at: i) subSystems ].
+		y add: (((datas at: index) subSystems
+				  detect: [ :e | e name = 'Subsystem 5' ]
+				  ifNone: [ nil ]) ifNil: [ 0 ] ifNotNil: [ 1 ]).
+		previous := datas at: index ].
 	c := RSChart new.
-	p := RSBarPlot  new x: x y: y.
+	p := RSBarPlot new x: x y: y.
 	p color: Color blue.
 	c addPlot: p.
 	c maxValueY: 1.
 
-	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
-	c addDecoration: (RSVerticalTick new integer; numberOfTicks: 2; yourself ).
+	c addDecoration: (RSHorizontalTick new
+			 fromNames: (datas collect: [ :e | e name ]);
+			 useDiagonalLabel;
+			 yourself).
+	c addDecoration: (RSVerticalTick new
+			 integer;
+			 numberOfTicks: 2;
+			 yourself).
 	canvas := RSCanvas new.
 	"canvas @ RSCanvasController."
-	c chartExtents extent: 400@((400*9)/16).
+	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
 	c xlabel: 'Tactical View reuse in prototypes'.
-	
+	canvas @ RSDraggableCanvas.
+	canvas @ RSZoomableCanvas.
+
 	c open.
-	
+
+	"RSPDFExporter new
+		zoomToShapes;
+		canvas: canvas;
+		exportToFile: 'Fig9.pdf' asFileReference"
+]
+
+{ #category : #'C Graph' }
+RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
+
+	<script>
+	| x y y2 datas previous c p canvas p2 lb set i val l |
+	x := OrderedCollection new.
+	x add: 'With Tactical View' -> 0.
+	x add: 'Without Tactical View' -> 0.
+
+
+	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
+	previous := nil.
+	1 to: datas size do: [ :index | 
+		val := (datas at: index) subSystems
+			       detect: [ :e | e name = 'Subsystem 5' ]
+			       ifNone: [ nil ].
+		val isNil
+			ifTrue: [ x last value: x last value + 1 ]
+			ifFalse: [ x first value: x first value + 1 ] ].
+
+	p := RSPie new
+		     objects: x;
+		     slice: [ :m | m value ];
+		     yourself.
+
+	p
+		sliceColor: NSScale category10;
+		build.
+	p shapes
+		select: [ :s | s model value > 5 ]
+		thenDo: [ :s | s emphasizeWith: 20 ].
+
+
+
+	canvas := p canvas.
+
+	lb := RSLegend new.
+	lb container: canvas.
+	lb text: 'With Tactical View' withBoxColor: p shapes first color.
+	lb text: 'Without Tactical View' withBoxColor: p shapes last color.
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location
+		inner;
+		bottom;
+		offset: 0 @ 30.
+	lb build.
+
+	"canvas @ RSCanvasController."
+		canvas zoomToFit.
+	canvas @ RSDraggableCanvas.
+	canvas @ RSZoomableCanvas.
+
+	canvas open.
+
 	RSPDFExporter new
 		zoomToShapes;
 		canvas: canvas;
@@ -1604,45 +1707,59 @@ RSPDFExporter new
 
 { #category : #'D Graph' }
 RTGraphs class >> timeSpentInPrototypes [
-<script>
-| x y  datas  c p canvas   data y2 p2 lb |
+
+	<script>
+	| x y datas c p canvas data y2 p2 lb |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
-	1 to: datas size do: [ :index |
+	1 to: datas size do: [ :index | 
 		x add: index.
 		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
-		data := (datas at: index).
-		y add: ((((data mostRecentVersionDate julianDayNumber - data firstVersionDate julianDayNumber) / data subSystems  size) / data developers size ) / (data publications ifNil:[1]) ) asFloat.
-		y2 add: data developers size.
-		].
+		data := datas at: index.
+		y add: (data mostRecentVersionDate julianDayNumber
+			 - data firstVersionDate julianDayNumber / data developers size
+			 / (data publications ifNil: [ 1 ])) asFloat.
+		y2 add: data developers size ].
 	c := RSChart new.
-	p := RSBarPlot  new x: x y: y.
+	p := RSBarPlot new x: x y: y.
 	p2 := RSLinePlot new x: x y: y2.
 	p2 color: Color red muchDarker.
 	p color: Color green muchDarker.
 	c addPlot: p.
 	c addPlot: p2.
 
-	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
-	c addDecoration: (RSVerticalTick new ).
-	
+	c addDecoration: (RSHorizontalTick new
+			 fromNames: (datas collect: [ :e | e name ]);
+			 useDiagonalLabel;
+			 yourself).
+	c addDecoration: RSVerticalTick new.
+
 	canvas := RSCanvas new.
 	"canvas @ RSCanvasController."
-	c chartExtents extent: 400@((400*9)/16).
+	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
-	
+
 	lb := RSLegend new.
 	lb container: c canvas.
-	lb text: 'Days for publication by subsystems by develeopper' withBoxColor: p computeColor.
+	lb
+		text: 'Days for publication by subsystems by develeopper'
+		withBoxColor: p computeColor.
 	lb text: 'Number of developpers' withBoxColor: p2 computeColor.
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location offset: 200@40.
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location offset: 200 @ 40.
 	lb build.
-	
+
+	canvas @ RSDraggableCanvas.
+	canvas @ RSZoomToFitCanvas.
+	canvas @ RSZoomableCanvas.
 	c open.
-	
+
 	RSPDFExporter new
 		zoomToShapes;
 		canvas: canvas;
