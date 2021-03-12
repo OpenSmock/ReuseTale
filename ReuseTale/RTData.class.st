@@ -250,3 +250,14 @@ RTData >> years [
 	stream << (self mostRecentVersionDate year - 2000) printString.
 	^ stream contents
 ]
+
+{ #category : #accessing }
+RTData >> yearsList [
+
+	| stream firstYear oc |
+	self firstVersionDate year = self mostRecentVersionDate year ifTrue: [ 
+		^ Array with: self firstVersionDate year ].
+	oc := OrderedCollection new.
+	(self firstVersionDate year to: self mostRecentVersionDate year) do: [ :e | oc add: e ].
+	^ oc
+]

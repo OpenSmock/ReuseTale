@@ -1229,13 +1229,21 @@ RTGraphs class >> reuseLevelByYear [
 RTGraphs class >> reuseLevelByYearSpecificCanvas [
 
 	<script>
-	| x y r c nb p datas y2 nb2 canvas manualTicks lb decoplot paint vertical |
+	| x y r c nb p datas y2 nb2 canvas manualTicks lb decoplot paint vertical x2 protos p2 vertical2 |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
+	x2 := OrderedCollection new.
 	y2 := OrderedCollection new.
+
 	r := Random new.
 	datas := RTPrototypeDataRepository getPrototypesByYear associations 
 		         asSortedCollection: [ :a :b | a key < b key ].
+
+	protos := RTPrototypeDataRepository prototypes.
+	2010 to: 2021 do: [ :year | 
+		x2 add: year.
+		y2 add:
+			(protos select: [ :e | e yearsList includes: year ]) size * 10 ].
 
 	datas do: [ :dataList | 
 		dataList value size = 0 ifFalse: [ 
@@ -1249,8 +1257,15 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 			y add: nb / nb2 * 100 ] ].
 	c := RSChart new.
 	p := RSLinePlot new x: x y: y.
+	p2 := RSBarPlot new
+		      x: x2 y: y2;
+		      color: Color green muchLighter;
+		      yourself.
 	p color: Color blue.
+	c addPlot: p2.
 	c addPlot: p.
+
+
 
 	decoplot := RSAreaPlot new x: x y1: y y2: 0.
 	paint := LinearGradientPaint fromArray: { 
@@ -1268,14 +1283,29 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 		               useNiceLabel;
 		               yourself.
 	2010 to: 2021 do: [ :yr | manualTicks addValue: yr ].
+
 	"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )."
 	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
 	c addDecoration: manualTicks.
 	vertical := RSVerticalTick new.
 	vertical shape dashed.
+	vertical labelConversion: [ :line | '' ].
+	vertical numberOfTicks: 6.
 	vertical configuration tickSize: c extent x negated.
-
 	c addDecoration: vertical.
+	vertical2 := RSVerticalTick new.
+	vertical2 numberOfTicks: 6.
+	vertical2 color: Color blue.
+	c addDecoration: vertical.
+	c addDecoration: vertical2.
+	c addDecoration: (RSVerticalRightTick new
+			 values: (1 to: 100);
+			 labelConversion: [ :line | line / 10 ];
+			 numberOfTicks: 6;
+			 color: Color green muchLighter;
+			 yourself).
+
+
 
 	canvas := RSCanvas new.
 	canvas @ RSZoomableCanvas.
@@ -1288,6 +1318,7 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 	lb := RSLegend new.
 	lb container: canvas.
 	lb text: '% of reused components' withBoxColor: p computeColor.
+	lb text: 'Number of prototypes' withBoxColor: Color green muchLighter.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
@@ -1664,11 +1695,11 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 		     yourself.
 	p color: Color purple muchDarker.
 	c addPlot: p.
-	p2 := RSBarPlot new
+	"p2 := RSBarPlot new
 		      x: x y: y * 10;
 		      yourself.
 	p2 color: Color blue darker.
-	c addPlot: p2.
+	c addPlot: p2."
 
 	"p := RSLinePlot   new x: x y: y2; fmt: 'o'; yourself ."
 
@@ -1697,7 +1728,6 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 			 yourself).
 	c addDecoration: (RSVerticalTick new
 			 integer;
-			 offset: -10;
 			 numberOfTicks: 10;
 			 yourself).
 	canvas := RSCanvas new.
@@ -1709,7 +1739,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	lb := RSLegend new.
 	lb container: c canvas.
 	lb text: 'Number of components' withBoxColor: p computeColor.
-	lb text: 'Number of subsystems' withBoxColor: p2 computeColor.
+	"lb text: 'Number of subsystems' withBoxColor: p2 computeColor."
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
@@ -1774,8 +1804,6 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 	| x y y2 datas previous c p canvas p2 lb set manualTicks decoplot color paint x2 protos |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
-	x2 := OrderedCollection new.
-	y2 := OrderedCollection new.
 
 
 	datas := (RTPrototypeDataRepository subSystems at: 'Subsystem 5')
@@ -1783,26 +1811,20 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 		         :a 
 		         :b | a key < b key ].
 
-	protos := RTPrototypeDataRepository getPrototypesByYear associations.
-	protos do: [ :assoc | 
-		x2 add: (Date year: assoc key day: 1) julianDayNumber.
-		y2 add: assoc value size * 50 ].
+
 
 	previous := nil.
 	1 to: datas size do: [ :index | 
 		x add: (datas at: index) key julianDayNumber.
 		y add: (datas at: index) value components ].
 	c := RSChart new.
-	p2 := RSBarPlot new
-		      x: x2 y: y2;
-		      color: Color blue muchLighter;
-		      yourself.
+	
 	p := RSLinePlot new
 		     x: x y: y;
 		     fmt: 'o';
 		     yourself.
 	p color: Color blue lighter.
-	c addPlot: p2.
+
 	c addPlot: p.
 
 	decoplot := RSAreaPlot new x: x y1: y y2: 0.
@@ -1830,11 +1852,7 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 			 integer;
 			 numberOfTicks: 10;
 			 yourself).
-	c addDecoration: (RSVerticalRightTick new
-			 values: (1 to: 250);
-			 labelConversion: [ :line | line / 50 ];
-			 color: Color blue muchLighter;
-			 yourself).
+
 	canvas := RSCanvas new.
 	"canvas @ RSCanvasController."
 	c chartExtents extent: 400 @ (400 * 9 / 16).
