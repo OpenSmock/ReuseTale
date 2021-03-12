@@ -1005,6 +1005,47 @@ RTGraphs class >> notReusedInPercentDuringYears [
 
 ]
 
+{ #category : #'G Graph' }
+RTGraphs class >> numberOfSubsystemsUses [
+	<script>
+	| prototypes chart lineNbUsedSubsystems subsystems x y index |
+
+	prototypes := RTPrototypeDataRepository prototypes.
+	subsystems := RTPrototypeDataRepository subSystems.
+	
+	"Initialize uses table"
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	index := 1.	
+
+	"For earch subsystems, count every use in each prototypes"
+	subsystems do:[ :ss | | count |
+		count := 0.
+		prototypes do:[ :proto | | value |
+			value := proto subSystems detect:[:e | e name = ss name] ifNone:[nil]. 
+			value ifNotNil:[count := count + 1].
+		].
+		x add: index.
+		y add: count.
+		index := index + 1.
+	].
+	
+	"Create lines"
+	lineNbUsedSubsystems := RSBarPlot new x: x y: y.
+
+	chart := RSChart new.
+	chart addPlot: lineNbUsedSubsystems.
+	
+	"Chart style"
+	chart title: 'Number of subsystems uses'.
+	chart addDecoration: (RSHorizontalTick new fromNames: ((subsystems collect: [:ss | ss description ]) values); useNiceLabel;  useDiagonalLabel; yourself).
+	chart addDecoration: (RSVerticalTick new integer; numberOfTicks: 24; yourself ).
+	
+	"Open the Chart"
+	chart open.
+	
+]
+
 { #category : #'A Graph' }
 RTGraphs class >> openAverageLatexTable [
 	^'
