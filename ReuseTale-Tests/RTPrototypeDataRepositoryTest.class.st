@@ -39,3 +39,15 @@ RTPrototypeDataRepositoryTest >> testNbOfUsesForSubSystem [
 	self assert: (self repository nbOfUsesForSubSystem: (self subSystems first name)) equals: 2.
 	self assert: (self repository nbOfUsesForSubSystem: (self subSystems second name)) equals: 1.
 ]
+
+{ #category : #test }
+RTPrototypeDataRepositoryTest >> testPrototypes [
+
+	self assert: self repository prototypes size equals: 2
+]
+
+{ #category : #test }
+RTPrototypeDataRepositoryTest >> testSubSystems [
+
+	self assert: self repository subSystems size equals: 2
+]

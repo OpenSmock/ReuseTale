@@ -23,6 +23,7 @@ RTSourceCodeData class >> fromArray: array [
 { #category : #accessing }
 RTSourceCodeData >> classes [
 
+	classes ifNil: [ classes := 0 ].
 	^ classes
 ]
 
@@ -35,6 +36,7 @@ RTSourceCodeData >> classes: anObject [
 { #category : #accessing }
 RTSourceCodeData >> components [
 
+	components ifNil: [ components := 0 ].
 	^ components
 ]
 
@@ -47,6 +49,7 @@ RTSourceCodeData >> components: anObject [
 { #category : #accessing }
 RTSourceCodeData >> methods [
 
+	methods ifNil:[methods := 0].
 	^ methods
 ]
 
