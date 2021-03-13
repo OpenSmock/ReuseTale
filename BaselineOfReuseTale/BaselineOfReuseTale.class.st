@@ -15,10 +15,11 @@ BaselineOfReuseTale >> baseline: spec [
 		"ReuseTale packages"
 		spec package: 'ReuseTale'.
 		spec package: 'ReuseTale-Tests' with: [ spec requires: #('ReuseTale') ].
+		spec baseline: 'Roassal3Exporters' with: [ spec repository: 'github://ObjectProfile/Roassal3Exporters' ].
 		
 		"Dependencies for Pharo 8"
 		spec for: #'pharo8.x'do: [ 
 			spec baseline: 'Roassal3' with: [ spec repository: 'github://ObjectProfile/Roassal3' ].
-		]
+		].
 	]
 ]
