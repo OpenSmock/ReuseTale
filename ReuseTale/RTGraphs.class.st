@@ -93,11 +93,12 @@ RTGraphs class >> classesEvolutionBySubsystems [
 			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
 		               useNiceLabel;
+				fontSize: 8;
 		               yourself.
 	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
 
 	c addDecoration: manualTicks.
-	c addDecoration: RSVerticalTick new.
+	c addDecoration: (RSVerticalTick new fontSize: 8; yourself).
 	
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
@@ -105,6 +106,7 @@ RTGraphs class >> classesEvolutionBySubsystems [
 	
 	lb := RSLegend new.
 	lb container: c canvas.
+	lb defaultLabel fontSize: 12.
 	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
 	lb legendDo: [ :shape | 
 		shape
@@ -212,17 +214,21 @@ RTGraphs class >> componentEvolutionBySubsystems [
 			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
 		               useNiceLabel;
+				fontSize: 8;
 		               yourself.
 	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
 
 	c addDecoration: manualTicks.
-	c addDecoration: RSVerticalTick new.
+	c addDecoration: (RSVerticalTick new fontSize: 8; yourself).
 
 	canvas := RSCanvas new.
 	c container: canvas.
+	c ylabel: 'Nb. of Components'.
+	c xlabel: 'Years'.
 
 	lb := RSLegend new.
 	lb container: c canvas.
+	lb defaultLabel fontSize: 12.
 	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
 	lb legendDo: [ :shape | 
 		shape
@@ -231,9 +237,6 @@ RTGraphs class >> componentEvolutionBySubsystems [
 			scaleBy: 0.5 ].
 	lb location inner; bottom; right; offset: -25.
 	lb build.
-
-	c ylabel: 'Nb. of Components'.
-	c xlabel: 'Years'.
 
 	^self openAndExportRSObject: c name: 'Fig8'.
 ]
@@ -361,11 +364,12 @@ RTGraphs class >> methodEvolutionBySubsystems [
 			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
 		               useNiceLabel;
+				fontSize: 8;
 		               yourself.
 	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
 
 	c addDecoration: manualTicks.
-	c addDecoration: RSVerticalTick new.
+	c addDecoration: (RSVerticalTick new fontSize: 8; yourself).
 	
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
@@ -373,13 +377,14 @@ RTGraphs class >> methodEvolutionBySubsystems [
 	
 	lb := RSLegend new.
 	lb container: c canvas.
+	lb defaultLabel fontSize: 12.
 	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location inner; bottom; right; offset: -25.
+	lb location inner; bottom; right; offset: -35.
 	lb build.
 	
 	c ylabel: 'Nb. of Methods'.
@@ -927,12 +932,12 @@ RTGraphs class >> numberOfSubsystemsUses [
 { #category : #private }
 RTGraphs class >> openAndExportRSObject: aRSObject name: aString [
 	"This method set interaction and open a graph canvas"
-	
+
 	"Setup standard size"
 	(aRSObject isKindOf: RSChart) ifTrue:[
-		aRSObject chartExtents extent: 400@((400*9)/16).
+		aRSObject chartExtents extent: self standardRSObjectExtents.
 	].
-	
+
 	"Dont build RSPie because of bad color management"
 	(aRSObject isKindOf: RSPie) ifFalse:[
 		"Build the canvas before have interaction (dont export UI)"
@@ -1118,24 +1123,21 @@ RTGraphs class >> reuseLevelByYear [
 ]
 
 { #category : #'D Graph' }
-RTGraphs class >> reuseLevelByYearSpecificCanvas [
-
+RTGraphs class >> reuseLevelByYearGraph [
 	<script>
-	| x y r c nb p datas y2 nb2 canvas manualTicks lb decoplot paint vertical x2 protos p2 vertical2 |
+	| x y r c nb p datas y2 nb2 canvas manualTicks lb decoplot vertical x2 protos p2 |
+
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	x2 := OrderedCollection new.
 	y2 := OrderedCollection new.
 
 	r := Random new.
-	datas := RTPrototypeDataRepository getPrototypesByYear associations 
-		         asSortedCollection: [ :a :b | a key < b key ].
-
+	datas := RTPrototypeDataRepository getPrototypesByYear associations asSortedCollection: [ :a :b | a key < b key ].
 	protos := RTPrototypeDataRepository prototypes.
 	2010 to: 2021 do: [ :year | 
 		x2 add: year.
-		y2 add:
-			(protos select: [ :e | e yearsList includes: year ]) size * 10 ].
+		y2 add: (protos select: [ :e | e yearsList includes: year ]) size * 10 ].
 
 	datas do: [ :dataList | 
 		dataList value size = 0 ifFalse: [ 
@@ -1145,28 +1147,20 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 			dataList value do: [ :proto | 
 				nb := nb + proto nbReusedComponents.
 				nb2 := nb2 + proto nbTotalComponents ].
+			y add: nb / nb2 * 100 ] 
+	].
 
-			y add: nb / nb2 * 100 ] ].
 	c := RSChart new.
 	p := RSLinePlot new x: x y: y.
 	p2 := RSBarPlot new
 		      x: x2 y: y2;
-		      color: Color green muchLighter;
+		      color: Color gray;
 		      yourself.
 	p color: Color blue.
 	c addPlot: p2.
 	c addPlot: p.
 
-
-
-	decoplot := RSAreaPlot new x: x y1: y y2: 0.
-	paint := LinearGradientPaint fromArray: { 
-			         (0 -> (Color blue lighter alpha: 0.3)).
-			         (0.8 -> Color transparent) }.
-	paint
-		start: 0 @ -100;
-		stop: 0 @ 100.
-	decoplot shape paint: paint.
+	decoplot := RSLinePlot new x: x y: y.
 	c addPlot: decoplot.
 
 	manualTicks := RSManualHorizontalTick new
@@ -1174,61 +1168,43 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 		               numberOfTicks: 11;
 		               useNiceLabel;
 		               yourself.
+	manualTicks fontSize: 8.
 	2010 to: 2021 do: [ :yr | manualTicks addValue: yr ].
-
-	"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )."
-	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
 	c addDecoration: manualTicks.
+
 	vertical := RSVerticalTick new.
 	vertical shape dashed.
-	vertical labelConversion: [ :line | '' ].
-	vertical numberOfTicks: 6.
-	vertical configuration tickSize: c extent x negated.
+	vertical numberOfTicks: 10.
+	vertical color: Color gray; fontSize: 8.
+	vertical labelConversion: [ :e |  e rounded printString, '%' ].
+	vertical configuration tickSize: self standardRSObjectExtents x negated.
 	c addDecoration: vertical.
-	vertical2 := RSVerticalTick new.
-	vertical2 numberOfTicks: 6.
-	vertical2 color: Color blue.
-	c addDecoration: vertical.
-	c addDecoration: vertical2.
+	
 	c addDecoration: (RSVerticalRightTick new
 			 values: (1 to: 100);
 			 labelConversion: [ :line | line / 10 ];
-			 numberOfTicks: 6;
-			 color: Color green muchLighter;
+			 numberOfTicks: 10;
+			fontSize: 8;
+			 color: Color gray;
 			 yourself).
-
-
-
+			
 	canvas := RSCanvas new.
-	canvas @ RSZoomableCanvas.
-	canvas @ RSDraggableCanvas.
-
-
-	c chartExtents extent: 200 @ 112.
 	c container: canvas.
 
 	lb := RSLegend new.
 	lb container: canvas.
-	lb text: '% of reused components' withBoxColor: p computeColor.
-	lb text: 'Number of prototypes' withBoxColor: Color green muchLighter.
+	lb defaultLabel fontSize: 18.
+	lb text: '% of Reused Components' withBoxColor: Color blue.
+	lb text: 'Nb. of active Prototypes' withBoxColor: Color gray.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location
-		bottom;
-		center;
-		offset: 80 @ 30.
+	lb location bottom; center; offset: 200 @ 30.
 	lb build.
 
-	c open.
-	canvas zoomToFit.
-
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig10.pdf' asFileReference
+	^self openAndExportRSObject: c name: 'Fig10'
 ]
 
 { #category : #'others graphs and tests' }
@@ -1412,6 +1388,7 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 	p build. "PLA : need to buil the PIE before adding legend, dirty..."
 
 	lb := RSLegend new.
+	lb defaultLabel fontSize: 18.
 	lb container: p canvas.
 	lb text: (x first key, ' (', x first value printString, ')') withBoxColor: NSScale category10 range first.
 	lb text: (x last key, ' (', x last value printString, ')') withBoxColor: NSScale category10 range second.
@@ -1420,7 +1397,7 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location inner; bottom; offset: 0 @ 30.
+	lb location inner; bottom; offset: 0 @ 40.
 	lb build.
 
 	^self openAndExportRSObject: p name: 'Fig9'.
@@ -1520,6 +1497,12 @@ RTGraphs class >> reusedComponentsByNbOfClasses [
 	c addDecoration: RSVerticalTick new.
 
 	c open
+]
+
+{ #category : #private }
+RTGraphs class >> standardRSObjectExtents [
+
+	^400@((400*9)/16)
 ]
 
 { #category : #'F Graph' }
@@ -1757,7 +1740,7 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 		exportToFile: 'Fig11.pdf' asFileReference
 ]
 
-{ #category : #'D Graph' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> timeSpentInPrototypes [
 
 	<script>
