@@ -1508,23 +1508,30 @@ RTGraphs class >> standardRSObjectExtents [
 
 { #category : #'F Graph' }
 RTGraphs class >> subsystemsAndComponentsNumberInTime [
+
 	<script>
-	| x y datas c p canvas y2 p2 lb datas2 comps manualTicks previous |
+	| x y datas c p canvas y2 p2 lb datas2 comps manualTicks previous dic asso |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
 
+	dic := OrderedDictionary new.
 	datas := RTPrototypeDataRepository getSubSystemsByYear.
-	(datas keys asSortedCollection last + 1) to: 2021 do: [ :i | datas at: i put: Array new ].
+	datas keys asSortedCollection do: [ :e | 
+		dic at: e put: (datas at: e) ].
+	datas := dic.
+	datas keys asSortedCollection last + 1 to: 2021 do: [ :i | 
+	datas at: i put: Array new ].
 	previous := 0.
-	datas associations do: [ :asso | 
+	datas keys do: [ :key | 
+		asso := key->(datas at: key).
 		x add: (Date year: asso key day: 1) julianDayNumber.
 		asso value size = 0
 			ifFalse: [ 
 				previous := asso value size + previous.
 				y add: previous ]
 			ifTrue: [ y add: previous ] ].
-		
+
 	datas2 := RTPrototypeDataRepository subSystemsSortedByName.
 	datas2 do: [ :syst | 
 		comps := syst
@@ -1538,43 +1545,44 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 					y2 at: index put: (y2 at: index) + a value ] ] ].
 
 	c := RSChart new.
-	
+
 	p := RSBarPlot new
 		     x: x y: y2;
 		     yourself.
 	p color: Color gray.
 	c addPlot: p.
-	
+
 	p2 := RSLinePlot new
-		      x: x y: (y * 50);
+		      x: x y: y * 50;
 		      fmt: 'o';
 		      yourself.
 	p2 color: Color blue.
 	c addPlot: p2.
 
 	manualTicks := RSManualHorizontalTick new
-		               labelConversion: [ :val |  (Date julianDayNumber: val) year ];
+		               labelConversion: [ :val | 
+			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
 		               fontSize: 8;
 		               yourself.
-	2007 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber ].
+	2007 to: 2021 do: [ :yr | 
+	manualTicks addValue: (Date year: yr day: 1) julianDayNumber ].
 	c addDecoration: manualTicks.
-	
+
 	c addDecoration: (RSVerticalTick new
 			 integer;
 			 fontSize: 8;
-			" numberOfTicks: 10;"
-			 yourself).
-			
+			 " numberOfTicks: 10;"yourself).
+
 	c addDecoration: (RSVerticalRightTick new
-			" integer;"
 			 values: (0 to: 800);
 			 numberOfTicks: 9;
 			 fontSize: 8;
 			 color: Color blue;
 			 labelConversion: [ :e | (e / 50) rounded ];
 			 yourself).
-			
+	" integer;"
+
 	canvas := RSCanvas new.
 	c container: canvas.
 
@@ -1588,10 +1596,13 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location bottom; center; offset: 200 @ 50.
+	lb location
+		bottom;
+		center;
+		offset: 200 @ 50.
 	lb build.
-		
-	^self openAndExportRSObject: c name: 'Fig12'
+
+	^ self openAndExportRSObject: c name: 'Fig12'
 ]
 
 { #category : #'others graphs and tests' }
