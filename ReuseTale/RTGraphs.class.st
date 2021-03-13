@@ -4,7 +4,7 @@ Class {
 	#category : #'ReuseTale-model'
 }
 
-{ #category : #'custom shape - experimental' }
+{ #category : #private }
 RTGraphs class >> ELPRsBox [
 | tmp |
 tmp := RSBox newAnonymousSubclass.
@@ -117,7 +117,7 @@ RTGraphs class >> classesEvolutionBySubsystems [
 	c ylabel: 'Nb. of Classes'.
 	c xlabel: 'Years'.
 	
-	^self openAndExportChart: c name: 'Fig8-a'
+	^self openAndExportRSObject: c name: 'Fig8-a'
 ]
 
 { #category : #'A LaTeX' }
@@ -145,7 +145,7 @@ Reused components and classes come from the subsystems used to build the prototy
 '
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> codeByDate [
 <script>
 | x y z r c p |
@@ -235,7 +235,7 @@ RTGraphs class >> componentEvolutionBySubsystems [
 	c ylabel: 'Nb. of Components'.
 	c xlabel: 'Years'.
 
-	^self openAndExportChart: c name: 'Fig8'.
+	^self openAndExportRSObject: c name: 'Fig8'.
 ]
 
 { #category : #'I Graph' }
@@ -385,10 +385,10 @@ RTGraphs class >> methodEvolutionBySubsystems [
 	c ylabel: 'Nb. of Methods'.
 	c xlabel: 'Years'.
 	
-	^self openAndExportChart: c name: 'Fig8-b'
+	^self openAndExportRSObject: c name: 'Fig8-b'
 ]
 
-{ #category : #'subsystems graphs' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbOfUsedSubsystemsDuringYears [
 	<script>
 	| prototypes x chart nbPrototypes yNbUsedSubsystems lineNbUsedSubsystems |
@@ -423,7 +423,7 @@ RTGraphs class >> nbOfUsedSubsystemsDuringYears [
 
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbProtoByYearCumulated [
 <script>
 | x y  r c  nb p2   datas |
@@ -450,7 +450,7 @@ RTGraphs class >> nbProtoByYearCumulated [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseClassesAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -526,7 +526,7 @@ RTGraphs class >> nbReuseClassesAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseCompAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -602,7 +602,7 @@ RTGraphs class >> nbReuseCompAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseCompByYear [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -637,7 +637,7 @@ RTGraphs class >> nbReuseCompByYear [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseCompByYearCumulated [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -671,7 +671,7 @@ RTGraphs class >> nbReuseCompByYearCumulated [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseMethodsAndNewByYear [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -748,7 +748,7 @@ RTGraphs class >> nbReuseMethodsAndNewByYear [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> nbReuseMethodsAndNewByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  paint color decoplot |
@@ -824,7 +824,7 @@ RTGraphs class >> nbReuseMethodsAndNewByYearCumulated [
 	c open
 ]
 
-{ #category : #'reuse code percent graphs' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> notReusedInPercentDuringYears [
 	<script>
 	| prototypes x chart nbPrototypes lineComponents lineClasses lineMethods yComponentsInPercent yClassesInPercent yMethodsInPercent |
@@ -925,27 +925,30 @@ RTGraphs class >> numberOfSubsystemsUses [
 ]
 
 { #category : #private }
-RTGraphs class >> openAndExportChart: aRSChart name: aString [
+RTGraphs class >> openAndExportRSObject: aRSObject name: aString [
 	"This method set interaction and open a graph canvas"
 	
 	"Setup standard size"
-	aRSChart chartExtents extent: 400@((400*9)/16).
+	(aRSObject isKindOf: RSChart) ifTrue:[
+		aRSObject chartExtents extent: 400@((400*9)/16).
+	].
 	
 	"Build the canvas before have interaction (dont export UI)"
-	aRSChart build.
+	aRSObject build.
 
 	"Export as PDF"
-	self exportAsPDFCanvas: aRSChart canvas name: aString.
+	self exportAsPDFCanvas: aRSObject canvas name: aString.
 
 	"Setup interaction"
-	aRSChart canvas @ RSDraggableCanvas.
-	aRSChart canvas @ RSZoomableCanvas.
-	aRSChart canvas @ RSCanvasController.
+	aRSObject canvas zoomToFit. 
+	aRSObject canvas @ RSDraggableCanvas.
+	aRSObject canvas @ RSZoomableCanvas.
+	aRSObject canvas @ RSCanvasController.
 
 	"Open the view"
-	aRSChart canvas openOnceWithTitle: 'ReuseTale - ', (aString ifNil:['untitled graph']).
+	aRSObject canvas openOnceWithTitle: 'ReuseTale - ', (aString ifNil:['untitled graph']).
 	
-	^aRSChart
+	^aRSObject
 ]
 
 { #category : #'A LaTeX' }
@@ -997,7 +1000,7 @@ RTGraphs class >> overallLatexTable [
 	stream contents inspect
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> percentageReuseByDates [
 <script>
 | x y z r c p nb p2 sorted y2 |
@@ -1038,7 +1041,7 @@ RTGraphs class >> percentageReuseByDates [
 	c open
 ]
 
-{ #category : #'reuse code percent graphs' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reuseInPercentDuringYears [
 	<script>
 	| prototypes x chart nbPrototypes yReuseComponentsInPercent yReuseClassesInPercent yReuseMethodsInPercent lineReuseComponents lineReuseClasses lineReuseMethods |
@@ -1080,7 +1083,7 @@ RTGraphs class >> reuseInPercentDuringYears [
 
 ]
 
-{ #category : #'reuse code percent graphs' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reuseLevelByYear [
 <script>
 | x y  r c  nb p p2   datas y2 nb2 |
@@ -1225,7 +1228,7 @@ RTGraphs class >> reuseLevelByYearSpecificCanvas [
 		exportToFile: 'Fig10.pdf' asFileReference
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reuseMethodsClassAndCompByYearCumulated [
 <script>
 | x y  c  nb p p2   datas y2 nb2 y3 nb3 p3  color decoplot paintBlock p1 |
@@ -1331,10 +1334,10 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 		inner; bottom; right; offset: -10.
 	lb build.
 	
-	^self openAndExportChart: c name: 'AGraph'.
+	^self openAndExportRSObject: c name: 'AGraph'.
 ]
 
-{ #category : #'C Graph' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reuseTacticalSubsystemInPrototypes [
 
 	<script>
@@ -1385,19 +1388,17 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypes [
 
 { #category : #'C Graph' }
 RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
-
 	<script>
-	| x y y2 datas previous c p canvas p2 lb set i val l |
+	| x datas previous p lb val |
 	x := OrderedCollection new.
-	x add: 'With Tactical View' -> 0.
-	x add: 'Without Tactical View' -> 0.
-
+	x add: 'Use Tactical View Subsystem' -> 0.
+	x add: 'Not use Tactical View Subsystem' -> 0.
 
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	previous := nil.
 	1 to: datas size do: [ :index | 
 		val := (datas at: index) subSystems
-			       detect: [ :e | e name = 'Subsystem 5' ]
+			       detect: [ :e | e name = 'Subsystem 5' ] "Tactical View Id"
 			       ifNone: [ nil ].
 		val isNil
 			ifTrue: [ x last value: x last value + 1 ]
@@ -1407,7 +1408,6 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 		     objects: x;
 		     slice: [ :m | m value ];
 		     yourself.
-
 	p
 		sliceColor: NSScale category10;
 		build.
@@ -1415,39 +1415,22 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 		select: [ :s | s model value > 5 ]
 		thenDo: [ :s | s emphasizeWith: 20 ].
 
-
-
-	canvas := p canvas.
-
 	lb := RSLegend new.
-	lb container: canvas.
-	lb text: 'With Tactical View' withBoxColor: p shapes first color.
-	lb text: 'Without Tactical View' withBoxColor: p shapes last color.
+	lb container: p canvas.
+	lb text: 'Use Tactical View Subsystem' withBoxColor: p shapes first color.
+	lb text: 'Not use Tactical View Subsystem' withBoxColor: p shapes last color.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location
-		inner;
-		bottom;
-		offset: 0 @ 30.
+	lb location inner; bottom; offset: 0 @ 30.
 	lb build.
 
-	"canvas @ RSCanvasController."
-		canvas zoomToFit.
-	canvas @ RSDraggableCanvas.
-	canvas @ RSZoomableCanvas.
-
-	canvas open.
-
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig9.pdf' asFileReference
+	^self openAndExportRSObject: p name: 'Fig9'.
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reusedClassesByDate [
 <script: 'self reusedClassesByDate'>
 | x y z r c p |
@@ -1479,7 +1462,7 @@ RTGraphs class >> reusedClassesByDate [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reusedComponentsByDate [
 <script>
 | x y z r c p |
@@ -1511,7 +1494,7 @@ RTGraphs class >> reusedComponentsByDate [
 	c open
 ]
 
-{ #category : #graphs }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> reusedComponentsByNbOfClasses [
 <script>
 | x y z r c p |
@@ -1660,7 +1643,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 		exportToFile: 'Fig12.pdf' asFileReference
 ]
 
-{ #category : #'subsystems graphs' }
+{ #category : #'others graphs and tests' }
 RTGraphs class >> subsystemsSizeDuringYears [
 	<script>
 	| subSystems chart nbSubSystems ssKeys |
