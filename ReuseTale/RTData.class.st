@@ -89,24 +89,26 @@ min year to: max year do:[ :y |
 { #category : #accessing }
 RTData >> componentsNumberByYearFrom: aYr1 to: aYr2 [
 
-| min max dic val valNb previous |
-dic := Dictionary new.
-min := Date year: aYr1 day: 1.
-max := (Date year: aYr2 day: 1).
-self sourceCodeDataHistory associations do: [  :p | min > p key ifTrue:[min := p key]. max < p key ifTrue:[max := p key ]. ].
-	previous :=0.
-min year to: max year do:[ :y |
-	val :=	(self sourceCodeDataHistory associations select: [  :e | e key year = y ]).
-	valNb := 0.
+	| min max dic val valNb previous |
+	dic := OrderedDictionary new.
+	min := Date year: aYr1 day: 1.
+	max := Date year: aYr2 day: 1.
+	self sourceCodeDataHistory associations do: [ :p | 
+		min > p key ifTrue: [ min := p key ].
+		max < p key ifTrue: [ max := p key ] ].
+	previous := 0.
+	min year to: max year do: [ :y | 
+		val := self sourceCodeDataHistory associations select: [ :e | 
+			       e key year = y ].
+		valNb := 0.
 
-	val do: [  :e | valNb := valNb max: e value components  ].
-	valNb = 0 ifTrue:[ dic at: y put: previous ] ifFalse: [dic at: y put: valNb.
-		previous := valNb] .
-	].
-^dic
-
-
-
+		val do: [ :e | valNb := valNb max: e value components ].
+		valNb = 0
+			ifTrue: [ dic at: y put: previous ]
+			ifFalse: [ 
+				dic at: y put: valNb.
+				previous := valNb ] ].
+	^ dic
 ]
 
 { #category : #accessing }

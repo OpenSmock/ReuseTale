@@ -78,19 +78,22 @@ RTPrototypeDataRepository class >> getPrototypesFromOlderToMostRecent [
 
 { #category : #querying }
 RTPrototypeDataRepository class >> getSubSystemsByYear [
+
 	<script: 'self getSubSystemsByYear inspect'>
 	| min max dic |
-	
-	dic := Dictionary new.
-	min := self subSystems associations first value firstVersionDate .
-	max := self subSystems associations first value firstVersionDate .
-	self subSystems associations do: [  :p | min > p value firstVersionDate ifTrue:[min := p value firstVersionDate]. max < p value firstVersionDate ifTrue:[max := p value firstVersionDate ]. ].
-	min year to: max year do:[ :y |
-		dic at: y put:  (self subSystems associations select: [  :e | e value firstVersionDate year = y ]).
-	].
+	dic := OrderedDictionary new.
+	min := self subSystems associations first value firstVersionDate.
+	max := self subSystems associations first value firstVersionDate.
+	self subSystems associations do: [ :p | 
+		min > p value firstVersionDate ifTrue: [ 
+			min := p value firstVersionDate ].
+		max < p value firstVersionDate ifTrue: [ 
+			max := p value firstVersionDate ] ].
+	min year to: max year do: [ :y | 
+		dic at: y put: (self subSystems associations select: [ :e | 
+				 e value firstVersionDate year = y ]) ].
 
-	^dic
-
+	^ dic
 ]
 
 { #category : #accessing }
