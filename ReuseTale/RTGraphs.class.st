@@ -69,7 +69,7 @@ RTGraphs class >> classesEvolutionBySubsystems [
 
 	c := RSChart new.
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
+	colors := NSScale category20 range.
 	plots := OrderedCollection new.
 	
 	1 to: datas size do: [ :index |
@@ -86,6 +86,11 @@ RTGraphs class >> classesEvolutionBySubsystems [
 		p color: (colors at:index).
 		c addPlot: p.
 		plots add: (colors at:index)->((datas at: index) idWithName->p).
+		
+		"Create dots in the line"
+		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
+		p color: (colors at: index).
+		c addPlot: p.
 		 ].
 	
 	manualTicks := RSManualHorizontalTick new
@@ -189,7 +194,7 @@ RTGraphs class >> componentEvolutionBySubsystems [
 
 	c := RSChart new.
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
+	colors := NSScale category20 range.
 	plots := OrderedCollection new.
 
 	1 to: datas size do: [ :index | 
@@ -206,7 +211,12 @@ RTGraphs class >> componentEvolutionBySubsystems [
 		p x: x y: y.
 		p color: (colors at: index).
 		c addPlot: p.
-		plots add: (colors at: index) -> ((datas at: index) idWithName -> p) 
+		plots add: (colors at: index) -> ((datas at: index) idWithName -> p).
+		
+		"Create dots in the line"
+		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
+		p color: (colors at: index).
+		c addPlot: p.
 	].
 
 	manualTicks := RSManualHorizontalTick new
@@ -339,7 +349,7 @@ RTGraphs class >> methodEvolutionBySubsystems [
 
 	c := RSChart new.
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
+	colors := NSScale category20 range.
 	plots := OrderedCollection new.
 	
 	1 to: datas size do: [ :index |
@@ -356,6 +366,11 @@ RTGraphs class >> methodEvolutionBySubsystems [
 		p color: (colors at:index).
 		c addPlot: p.
 		plots add: (colors at:index)->((datas at: index) idWithName->p).
+		
+		"Create dots in the line"
+		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
+		p color: (colors at: index).
+		c addPlot: p.
 		 ].
 	
 
@@ -1152,12 +1167,18 @@ RTGraphs class >> reuseLevelByYearGraph [
 
 	c := RSChart new.
 	p := RSLinePlot new x: x y: y.
+	p color: Color blue.
+	c addPlot: p.
+	
 	p2 := RSBarPlot new
 		      x: x2 y: y2;
 		      color: Color gray;
 		      yourself.
-	p color: Color blue.
 	c addPlot: p2.
+	
+	"Create dots in the line"
+	p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
+	p color: Color blue.
 	c addPlot: p.
 
 	decoplot := RSLinePlot new x: x y: y.
@@ -1284,13 +1305,12 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 	previous := nil.
 	1 to: datas size do: [ :index |
 		x add: index.
-		"previous isNil ifFalse:[ y add: ((datas at: index) subSystems select:[:e | previous subSystems includes: e]) size] ifTrue:[ y add: 0]."
 		set := Set new.
 		1 to: index-1 do: [:i | set addAll: (datas at: i) subSystems ].
 		y add: ((datas at: index) subSystems select:[:e | set includes: e]) size.
 		y2 add: (datas at: index) subSystems size.
 		previous := datas at: index. 
-		 ].
+	].
 	c := RSChart new.
 	p := RSBarPlot  new x: x y: y2.
 	p color: Color cyan.
@@ -1313,7 +1333,7 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 		inner; bottom; right; offset: -10.
 	lb build.
 	
-	^self openAndExportRSObject: c name: 'AGraph'.
+	^self openAndExportRSObject: c name: 'AGraph-notUsed'.
 ]
 
 { #category : #'others graphs and tests' }
@@ -1677,10 +1697,8 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 		y add: (datas at: index) value components ].
 	c := RSChart new.
 	
-	p := RSLinePlot new
-		     x: x y: y;
-		     fmt: 'o';
-		     yourself.
+	"Create dots in the line"
+	p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
 	p color: Color blue.
 	c addPlot: p.
 
@@ -1699,7 +1717,7 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 
 	c addDecoration: manualTicks.
 	c addDecoration: (RSVerticalTick new
-			 color: Color blue;
+			" color: Color blue;"
 			fontSize: 8;
 			 integer;
 			 numberOfTicks: 10;
