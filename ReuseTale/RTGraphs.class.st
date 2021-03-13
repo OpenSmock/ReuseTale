@@ -1377,7 +1377,7 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 	previous := nil.
 	1 to: datas size do: [ :index | 
 		val := (datas at: index) subSystems
-			       detect: [ :e | e name = 'Subsystem 5' ] "Tactical View Id"
+			       detect: [ :e | e name = self tacticalViewSubsystemName]
 			       ifNone: [ nil ].
 		val isNil
 			ifTrue: [ x last value: x last value + 1 ]
@@ -1663,19 +1663,13 @@ RTGraphs class >> subsystemsSizeDuringYears [
 
 { #category : #'E Graph' }
 RTGraphs class >> tacticalSubsystemChangesInTime [
-
 	<script>
-	| x y y2 datas previous c p canvas p2 lb set manualTicks decoplot color paint x2 protos |
+	| x y datas previous c p canvas manualTicks decoplot lb |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 
-
-	datas := (RTPrototypeDataRepository subSystems at: 'Subsystem 5')
-		         sourceCodeDataHistory associations asSortedCollection: [ 
-		         :a 
-		         :b | a key < b key ].
-
-
+	datas := (RTPrototypeDataRepository subSystems at: self tacticalViewSubsystemName)
+		         sourceCodeDataHistory associations asSortedCollection: [   :a  :b | a key < b key ].
 
 	previous := nil.
 	1 to: datas size do: [ :index | 
@@ -1687,57 +1681,53 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 		     x: x y: y;
 		     fmt: 'o';
 		     yourself.
-	p color: Color blue lighter.
-
+	p color: Color blue.
 	c addPlot: p.
 
-	decoplot := RSAreaPlot new x: x y1: y y2: 0.
-	paint := LinearGradientPaint fromArray: { 
-			         (0 -> (Color blue lighter alpha: 0.3)).
-			         (0.8 -> Color transparent) }.
-	paint
-		start: 0 @ -100;
-		stop: 0 @ 100.
-	decoplot shape paint: paint.
+	decoplot := RSLinePlot new x: x y: y.
 	c addPlot: decoplot.
 
-	"c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself)."
 	manualTicks := RSManualHorizontalTick new
 		               labelConversion: [ :val | 
 			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
 		               numberOfTicks: 11;
+				fontSize: 8;
 		               yourself.
 	2010 to: 2021 do: [ :yr | 
 	manualTicks addValue: (Date year: yr day: 1) julianDayNumber ].
+
 	c addDecoration: manualTicks.
 	c addDecoration: (RSVerticalTick new
 			 color: Color blue;
+			fontSize: 8;
 			 integer;
 			 numberOfTicks: 10;
 			 yourself).
 
 	canvas := RSCanvas new.
-	"canvas @ RSCanvasController."
-	c chartExtents extent: 400 @ (400 * 9 / 16).
-	c ylabel: 'Number of components'.
-	c ylabelRight: 'Number of Prototypes'.
-
+	c ylabel: 'Nb. of Components'.
 	c container: canvas.
-	c xlabel: 'Tactical View number of components in time'.
-	canvas @ RSZoomableCanvas.
-	canvas @ RSDraggableCanvas.
 
+	lb := RSLegend new.
+	lb container: canvas.
+	lb defaultLabel fontSize: 18.
+	lb text: 'Nb. of Components in time for the Tactical View Subsystem' withBoxColor: Color blue.
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location bottom; center; offset: 200 @ 50.
+	lb build.
 
-	c chartExtents extent: 200 @ 112.
-	c container: canvas.
-	c open.
-	canvas zoomToFit.
+	^self openAndExportRSObject: c name: 'Fig11'
+]
 
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig11.pdf' asFileReference
+{ #category : #private }
+RTGraphs class >> tacticalViewSubsystemName [
+
+	^'Subsystem 5'
 ]
 
 { #category : #'others graphs and tests' }
