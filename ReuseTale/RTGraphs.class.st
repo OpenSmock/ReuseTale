@@ -933,8 +933,11 @@ RTGraphs class >> openAndExportRSObject: aRSObject name: aString [
 		aRSObject chartExtents extent: 400@((400*9)/16).
 	].
 	
-	"Build the canvas before have interaction (dont export UI)"
-	aRSObject build.
+	"Dont build RSPie because of bad color management"
+	(aRSObject isKindOf: RSPie) ifFalse:[
+		"Build the canvas before have interaction (dont export UI)"
+		aRSObject build.
+	].
 
 	"Export as PDF"
 	self exportAsPDFCanvas: aRSObject canvas name: aString.
@@ -1404,21 +1407,14 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 			ifTrue: [ x last value: x last value + 1 ]
 			ifFalse: [ x first value: x first value + 1 ] ].
 
-	p := RSPie new
-		     objects: x;
-		     slice: [ :m | m value ];
-		     yourself.
-	p
-		sliceColor: NSScale category10;
-		build.
-	p shapes
-		select: [ :s | s model value > 5 ]
-		thenDo: [ :s | s emphasizeWith: 20 ].
+	p := RSPie new  objects: (x collect:[ :e | e value]);  "slice: [ :m | m value ];" yourself.
+	p sliceColor: NSScale category10.
+	p build. "PLA : need to buil the PIE before adding legend, dirty..."
 
 	lb := RSLegend new.
 	lb container: p canvas.
-	lb text: 'Use Tactical View Subsystem' withBoxColor: p shapes first color.
-	lb text: 'Not use Tactical View Subsystem' withBoxColor: p shapes last color.
+	lb text: (x first key, ' (', x first value printString, ')') withBoxColor: NSScale category10 range first.
+	lb text: (x last key, ' (', x last value printString, ')') withBoxColor: NSScale category10 range second.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
