@@ -92,7 +92,7 @@ RTData >> componentsNumberByYearFrom: aYr1 to: aYr2 [
 | min max dic val valNb previous |
 dic := Dictionary new.
 min := Date year: aYr1 day: 1.
-max := Date year: aYr2 day: 1.
+max := (Date year: aYr2 day: 1).
 self sourceCodeDataHistory associations do: [  :p | min > p key ifTrue:[min := p key]. max < p key ifTrue:[max := p key ]. ].
 	previous :=0.
 min year to: max year do:[ :y |

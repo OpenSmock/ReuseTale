@@ -83,14 +83,10 @@ RTGraphs class >> classesEvolutionBySubsystems [
 		].
 		p := RSLinePlot new.
 		p x: x y: y.
+		p fmt: 'o'.
 		p color: (colors at:index).
 		c addPlot: p.
 		plots add: (colors at:index)->((datas at: index) idWithName->p).
-		
-		"Create dots in the line"
-		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
-		p color: (colors at: index).
-		c addPlot: p.
 		 ].
 	
 	manualTicks := RSManualHorizontalTick new
@@ -209,14 +205,10 @@ RTGraphs class >> componentEvolutionBySubsystems [
 			y add: e value components ].
 		p := RSLinePlot new.
 		p x: x y: y.
+		p fmt: 'o'.
 		p color: (colors at: index).
 		c addPlot: p.
 		plots add: (colors at: index) -> ((datas at: index) idWithName -> p).
-		
-		"Create dots in the line"
-		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
-		p color: (colors at: index).
-		c addPlot: p.
 	].
 
 	manualTicks := RSManualHorizontalTick new
@@ -363,14 +355,10 @@ RTGraphs class >> methodEvolutionBySubsystems [
 		].
 		p := RSLinePlot new.
 		p x: x y: y.
+		p fmt: 'o'.
 		p color: (colors at:index).
 		c addPlot: p.
 		plots add: (colors at:index)->((datas at: index) idWithName->p).
-		
-		"Create dots in the line"
-		p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
-		p color: (colors at: index).
-		c addPlot: p.
 		 ].
 	
 
@@ -1166,24 +1154,17 @@ RTGraphs class >> reuseLevelByYearGraph [
 	].
 
 	c := RSChart new.
-	p := RSLinePlot new x: x y: y.
-	p color: Color blue.
-	c addPlot: p.
-	
 	p2 := RSBarPlot new
 		      x: x2 y: y2;
 		      color: Color gray;
 		      yourself.
 	c addPlot: p2.
-	
-	"Create dots in the line"
-	p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
+
+	p := RSLinePlot new x: x y: y.
+	p fmt: 'o'.
 	p color: Color blue.
 	c addPlot: p.
-
-	decoplot := RSLinePlot new x: x y: y.
-	c addPlot: decoplot.
-
+	
 	manualTicks := RSManualHorizontalTick new
 		               useDiagonalLabel;
 		               numberOfTicks: 11;
@@ -1527,15 +1508,14 @@ RTGraphs class >> standardRSObjectExtents [
 
 { #category : #'F Graph' }
 RTGraphs class >> subsystemsAndComponentsNumberInTime [
-
 	<script>
-	| x y datas c p canvas data y2 p2 lb datas2 comps decoplot paint manualTicks previous lb2 |
+	| x y datas c p canvas y2 p2 lb datas2 comps manualTicks previous |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
+
 	datas := RTPrototypeDataRepository getSubSystemsByYear.
-	datas keys asSortedCollection last + 1 to: 2021 do: [ :i | 
-	datas at: i put: Array new ].
+	(datas keys asSortedCollection last + 1) to: 2021 do: [ :i | datas at: i put: Array new ].
 	previous := 0.
 	datas associations do: [ :asso | 
 		x add: (Date year: asso key day: 1) julianDayNumber.
@@ -1544,6 +1524,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 				previous := asso value size + previous.
 				y add: previous ]
 			ifTrue: [ y add: previous ] ].
+		
 	datas2 := RTPrototypeDataRepository subSystemsSortedByName.
 	datas2 do: [ :syst | 
 		comps := syst
@@ -1557,89 +1538,60 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 					y2 at: index put: (y2 at: index) + a value ] ] ].
 
 	c := RSChart new.
+	
 	p := RSBarPlot new
 		     x: x y: y2;
 		     yourself.
-	p color: Color purple muchDarker.
+	p color: Color gray.
 	c addPlot: p.
+	
 	p2 := RSLinePlot new
-		      x: x y: y * 10;
+		      x: x y: (y * 50);
 		      fmt: 'o';
 		      yourself.
-	p2 color: Color green.
+	p2 color: Color blue.
 	c addPlot: p2.
 
-	"p := RSLinePlot   new x: x y: y2; fmt: 'o'; yourself ."
-
-
-	"	decoplot := RSAreaPlot new x: x y1: y2 y2: 50.
-	paint := LinearGradientPaint fromArray: 
-		{0-> (Color purple muchDarker alpha: 0.3).
-		0.8 -> Color transparent}.
-	paint start: 0@ -100; stop: 0@ 100.
-	decoplot shape paint: paint.
-	c addPlot: decoplot."
-
-	"c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself)."
 	manualTicks := RSManualHorizontalTick new
-		               labelConversion: [ :val | 
-			               (Date julianDayNumber: val) year ];
+		               labelConversion: [ :val |  (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
-		               numberOfTicks: 11;
+		               fontSize: 8;
 		               yourself.
-	2007 to: 2021 do: [ :yr | 
-	manualTicks addValue: (Date year: yr day: 1) julianDayNumber ].
+	2007 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber ].
 	c addDecoration: manualTicks.
+	
 	c addDecoration: (RSVerticalTick new
 			 integer;
-			 numberOfTicks: 10;
+			 fontSize: 8;
+			" numberOfTicks: 10;"
 			 yourself).
-	c addDecoration: (RSVerticalTick new
-			 integer;
-			 numberOfTicks: 10;
-			 yourself).
+			
 	c addDecoration: (RSVerticalRightTick new
-			 integer;
-			 values: (1 to: 800);
-			 numberOfTicks: 6;
-			 color: Color green;
-			 labelConversion: [ :e | e / 10 ];
+			" integer;"
+			 values: (0 to: 800);
+			 numberOfTicks: 9;
+			 fontSize: 8;
+			 color: Color blue;
+			 labelConversion: [ :e | (e / 50) rounded ];
 			 yourself).
+			
 	canvas := RSCanvas new.
-	"	canvas @ RSCanvasController."
-	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
-	"	c xlabel: 'Subsystems and components in time'."
 
 	lb := RSLegend new.
 	lb container: c canvas.
-	lb text: 'Number of components' withBoxColor: p computeColor.
-	lb text: 'Number of subsystems' withBoxColor: p2 computeColor.
+	lb defaultLabel fontSize: 18.
+	lb text: 'Nb. of Components' withBoxColor: p computeColor.
+	lb text: 'Nb. of Subsystems' withBoxColor: p2 computeColor.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location
-		inner;
-		bottom;
-		left;
-		offset: 50 @ -150.
+	lb location bottom; center; offset: 200 @ 50.
 	lb build.
-
-	lb2 := RSLegend new.
-	lb2 container: c canvas.
-
-
-	canvas @ RSZoomableCanvas.
-	canvas @ RSDraggableCanvas.
-
-	c open.
-	canvas zoomToFit.
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig12.pdf' asFileReference
+		
+	^self openAndExportRSObject: c name: 'Fig12'
 ]
 
 { #category : #'others graphs and tests' }
@@ -1696,13 +1648,10 @@ RTGraphs class >> tacticalSubsystemChangesInTime [
 		x add: (datas at: index) key julianDayNumber.
 		y add: (datas at: index) value components ].
 	c := RSChart new.
-	
-	"Create dots in the line"
-	p := RSLinePlot new x: x y: y; fmt: 'o'; yourself.
-	p color: Color blue.
-	c addPlot: p.
 
 	decoplot := RSLinePlot new x: x y: y.
+	decoplot fmt: 'o'.
+	decoplot color: Color blue.
 	c addPlot: decoplot.
 
 	manualTicks := RSManualHorizontalTick new
