@@ -1,3 +1,5 @@
+![ReuseTaleBackground](https://user-images.githubusercontent.com/49183340/111032642-92f67a00-840d-11eb-8d9a-eebce4ffa9c5.jpg)
+
 # ReuseTale
 
 ## Loading project
