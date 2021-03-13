@@ -245,7 +245,6 @@ RTGraphs class >> componentEvolutionBySubsystems [
 
 { #category : #'I Graph' }
 RTGraphs class >> expertiseInPrototypes [
-
 	<script>
 	| x y datas c p canvas lb z ymin ymax xmax tmp |
 	x := OrderedCollection new.
@@ -253,6 +252,7 @@ RTGraphs class >> expertiseInPrototypes [
 	ymin := OrderedCollection new.
 	ymax := OrderedCollection new.
 	z := OrderedCollection new.
+
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	datas doWithIndex: [ :proto :index | 
 		proto developers do: [ :dev | 
@@ -275,51 +275,48 @@ RTGraphs class >> expertiseInPrototypes [
 
 	c addPlot: (RSAreaPlot new
 			 x: xmax y1: ymin y2: ymax;
-			 color: Color green muchLighter;
+			 color: Color blue muchLighter;
 			 yourself).
 	c addPlot: p.
 
-
 	c addDecoration: (RSHorizontalTick new
 			 integer;
-			 " fromNames: (datas collect: [ :e | e name ]);"labelConversion: [ 
+			labelConversion: [ 
 				 :val | 
 				 tmp := datas at: val ifAbsent: [ nil ].
-				 tmp ifNil: [ '' ] ];
-			 numberOfTicks: datas size + 2;
-			 useDiagonalLabel;
+				 tmp ifNil: [ '' ] ifNotNil:[ :e | (e name withoutPrefix:'Prototype '),  ' (', e nbDevelopers printString ,')'] ];
+			 numberOfTicks: datas size;
+			useDiagonalLabel;
+			fontSize: 8;
 			 yourself).
 	c addDecoration: (RSVerticalTick new
-			 numberOfTicks: 12;
+			integer;
+			labelConversion: [ :val | (val = 0 or:[val = 9 or:[val = 13]]) ifTrue:[''] ifFalse:[ 'Dev', val printString] ]; "dev 9 and dev 13 not exists"
+			 numberOfTicks: 14;
+			fontSize: 8;
 			 yourself).
-	c maxValueY: 15.
+	c maxValueY: 13.
 	c padding: 10 @ 0.
+	c xlabel: 'Prototypes from oldest to newest (with nb. of developpers)' offset: 0@ -65.
+	c ylabel: 'Developpers' offset: -10 @ -30.
 
 	canvas := RSCanvas new.
-"	canvas @ RSCanvasController."
-	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
 
 	lb := RSLegend new.
 	lb container: c canvas.
-	lb text: 'Expertise' withBoxColor: Color green muchLighter.
-	lb text: 'Developper' withBoxColor: Color blue.
+	lb defaultLabel fontSize: 18.
+	lb text: 'Expertise Zone' withBoxColor: Color blue muchLighter.
+	lb text: 'Intervention of a developer ' withBoxColor: Color blue.
 	lb legendDo: [ :shape | 
 		shape
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location offset: 200 @ 40.
+	lb location offset: 200 @ 60.
 	lb build.
 
-	c ylabel: 'Developper ID'.
-
-	c open.
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig13.pdf' asFileReference
-
+	^self openAndExportRSObject: c name: 'Fig13'
 ]
 
 { #category : #private }
@@ -1588,7 +1585,7 @@ RTGraphs class >> subsystemsUsesInPrototypes [
 	<script>
 	| prototypes chart lineNbUsedSubsystems subsystems x y index canvas |
 	prototypes := RTPrototypeDataRepository prototypes.
-	subsystems := RTPrototypeDataRepository subSystems.
+	subsystems := RTPrototypeDataRepository subSystemsSortedByFirstVersionDate.
 
 	"Initialize uses table"
 	x := OrderedCollection new.
@@ -1609,21 +1606,26 @@ RTGraphs class >> subsystemsUsesInPrototypes [
 		y add: count.
 		index := index + 1 ].
 
+	chart := RSChart new.
+	chart xlabel: 'Subsystems sorted by creation date' offset: -60@ 180.
+	chart ylabel: 'Nb. of Prototypes' offset: -30@ -80.
+
 	"Create lines"
 	lineNbUsedSubsystems := RSBarPlot new x: x y: y.
 
-	chart := RSChart new.
 	chart addPlot: lineNbUsedSubsystems.
 
 	"Chart style"
 	chart addDecoration: (RSHorizontalTick new
-			 fromNames: (subsystems collect: [ :ss | ss description ]) values;
+			 fromNames: (subsystems collect: [ :ss | ss description, ' (', ss firstVersionDate year printString ,')' ]);
 			 useNiceLabel;
+			 fontSize: 8;
 			 useDiagonalLabel;
 			 yourself).
 	chart addDecoration: (RSVerticalTick new
 			 integer;
-			 numberOfTicks: 24;
+			fontSize: 8;
+			 numberOfTicks: 16;
 			 yourself).
 
 	canvas := RSCanvas new.

@@ -160,10 +160,17 @@ RTPrototypeDataRepository class >> subSystems [
 ]
 
 { #category : #accessing }
+RTPrototypeDataRepository class >> subSystemsSortedByFirstVersionDate [
+
+	^ (self subSystems values sort: [ :a :b | 
+		  a firstVersionDate < b firstVersionDate ]) asOrderedCollection
+]
+
+{ #category : #accessing }
 RTPrototypeDataRepository class >> subSystemsSortedByName [
 
-	^ self subSystems values sort: [ :a :b | 
-		  a id asNumber < b id asNumber ]
+	^ (self subSystems values sort: [ :a :b | 
+		  a id asNumber < b id asNumber ]) asOrderedCollection
 ]
 
 { #category : #statistics }
