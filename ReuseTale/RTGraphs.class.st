@@ -13,7 +13,7 @@ tmp compile: 'radius: aValue
 ^tmp
 ]
 
-{ #category : #'A Graph' }
+{ #category : #'A LaTeX' }
 RTGraphs class >> averageLatexTable [
 
 	<script>
@@ -64,14 +64,14 @@ RTGraphs class >> averageLatexTable [
 
 { #category : #'B Graph' }
 RTGraphs class >> classesEvolutionBySubsystems [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+	<script>
+	| x y datas c p canvas lb colors plots data dataSource manualTicks |
 
 	c := RSChart new.
-	
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
+	
 	1 to: datas size do: [ :index |
 		x := OrderedCollection new.
 		y := OrderedCollection new.
@@ -85,34 +85,42 @@ RTGraphs class >> classesEvolutionBySubsystems [
 		p x: x y: y.
 		p color: (colors at:index).
 		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
+		plots add: (colors at:index)->((datas at: index) idWithName->p).
 		 ].
 	
+	manualTicks := RSManualHorizontalTick new
+		               labelConversion: [ :val | 
+			               (Date julianDayNumber: val) year ];
+		               useDiagonalLabel;
+		               useNiceLabel;
+		               yourself.
+	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
 
-	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 15; yourself ).
-	c addDecoration: (RSVerticalTick new ).
+	c addDecoration: manualTicks.
+	c addDecoration: RSVerticalTick new.
+	
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	
 	lb := RSLegend new.
 	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
+	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location inner; bottom; right; offset: -25.
 	lb build.
 	
-	c ylabel: 'Nb. of classes'.
-	c xlabel: 'Time'.
+	c ylabel: 'Nb. of Classes'.
+	c xlabel: 'Years'.
 	
-	c open
+	^self openAndExportChart: c name: 'Fig8-a'
 ]
 
-{ #category : #'A Graph' }
+{ #category : #'A LaTeX' }
 RTGraphs class >> closeAverageLatexTable [
 	^'
 \end{tabular}
@@ -123,7 +131,7 @@ Values are rounded to hundredths.}
 '
 ]
 
-{ #category : #'A Graph' }
+{ #category : #'A LaTeX' }
 RTGraphs class >> closeFullStatisticsLatexTable [
 	^'
 \end{tabular}
@@ -174,14 +182,14 @@ RTGraphs class >> codeByDate [
 
 { #category : #'B Graph' }
 RTGraphs class >> componentEvolutionBySubsystems [
-
 	<script>
-	| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource manualTicks |
-	c := RSChart new.
+	| x y datas c p canvas lb colors plots data dataSource manualTicks |
 
+	c := RSChart new.
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
+
 	1 to: datas size do: [ :index | 
 		x := OrderedCollection new.
 		y := OrderedCollection new.
@@ -196,27 +204,21 @@ RTGraphs class >> componentEvolutionBySubsystems [
 		p x: x y: y.
 		p color: (colors at: index).
 		c addPlot: p.
-		plots add: (colors at: index) -> ((datas at: index) idWithName -> p) ].
-
+		plots add: (colors at: index) -> ((datas at: index) idWithName -> p) 
+	].
 
 	manualTicks := RSManualHorizontalTick new
 		               labelConversion: [ :val | 
 			               (Date julianDayNumber: val) year ];
 		               useDiagonalLabel;
-		               numberOfTicks: 11;
 		               useNiceLabel;
 		               yourself.
-	2010 to: 2021 do: [ :yr | 
-		manualTicks addValue: (Date year: yr day: 1) julianDayNumber
-		"c addDecoration: (RSXMarkerDecoration new value: ((Date year: yr day: 1 ) julianDayNumber) )." ].
-	"manualTicks addValue: (Date year: 2015 month: 6 day: 15) julianDayNumber."
+	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
+
 	c addDecoration: manualTicks.
 	c addDecoration: RSVerticalTick new.
 
 	canvas := RSCanvas new.
-	"canvas @ RSCanvasController."
-	c chartExtents extent: 400 @ (400 * 9 / 16).
-
 	c container: canvas.
 
 	lb := RSLegend new.
@@ -227,174 +229,13 @@ RTGraphs class >> componentEvolutionBySubsystems [
 			withBorder;
 			padding: 10;
 			scaleBy: 0.5 ].
-	lb location
-		inner;
-		bottom;
-		right;
-		offset: -25.
+	lb location inner; bottom; right; offset: -25.
 	lb build.
 
-	c ylabel: 'Nb. of components'.
+	c ylabel: 'Nb. of Components'.
 	c xlabel: 'Years'.
-	canvas @ RSDraggableCanvas.
-	canvas @ RSZoomableCanvas.
 
-	c open.
-
-	RSPDFExporter new
-		zoomToShapes;
-		canvas: canvas;
-		exportToFile: 'Fig8.pdf' asFileReference
-]
-
-{ #category : #'B Graph' }
-RTGraphs class >> componentEvolutionBySubsystems2 [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
-
-	c := RSChart new.
-	
-	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
-	plots := OrderedCollection new.
-	1 to: datas size do: [ :index |
-		x := OrderedCollection new.
-		y := OrderedCollection new.
-		data := datas at: index.
-		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
-		dataSource do: [ :e |
-			x add: e key julianDayNumber.
-			y add: e value classes.
-		].
-		p := RSLinePlot new.
-		p x: x y: y.
-		p color: (colors at:index).
-		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
-		 ].
-	
-
-	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 20; useNiceLabel; yourself ).
-	c addDecoration: (RSVerticalTick new ).
-	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
-	c container: canvas.
-	
-	lb := RSLegend new.
-	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
-	lb build.
-	
-	c ylabel: 'Nb. of classes'.
-	c xlabel: 'Time'.
-	
-	c open
-]
-
-{ #category : #'B Graph' }
-RTGraphs class >> componentEvolutionBySubsystems3 [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
-
-	c := RSChart new.
-	
-	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
-	plots := OrderedCollection new.
-	1 to: datas size do: [ :index |
-		x := OrderedCollection new.
-		y := OrderedCollection new.
-		data := datas at: index.
-		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
-		dataSource do: [ :e |
-			x add: e key julianDayNumber.
-			y add: e value classes.
-		].
-		p := RSLinePlot new.
-		p x: x y: y.
-		p color: (colors at:index).
-		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
-		 ].
-	
-
-	c addDecoration: (RSHorizontalTick new useDiagonalLabel; numberOfTicks: 50; integer; doNotUseNiceLabel ; yourself ).
-	c addDecoration: (RSVerticalTick new ).
-	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
-	c container: canvas.
-	
-	lb := RSLegend new.
-	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
-	lb build.
-	
-	c ylabel: 'Nb. of classes'.
-	c xlabel: 'Time'.
-	
-	c open
-]
-
-{ #category : #'B Graph' }
-RTGraphs class >> componentEvolutionBySubsystems4 [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
-
-	c := RSChart new.
-	
-	datas := RTPrototypeDataRepository subSystemsSortedByName.
-	colors := Color wheel: datas size.
-	plots := OrderedCollection new.
-	1 to: datas size do: [ :index |
-		x := OrderedCollection new.
-		y := OrderedCollection new.
-		data := datas at: index.
-		dataSource := data sourceCodeDataHistory associations asSortedCollection:[:a :b | a key julianDayNumber < b key julianDayNumber ].
-		dataSource do: [ :e |
-			x add: e key julianDayNumber.
-			y add: e value classes.
-		].
-		p := RSLinePlot new.
-		p x: x y: y.
-		p color: (colors at:index).
-		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
-		 ].
-	
-
-	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 50; doNotUseNiceLabel ; yourself ).
-	c addDecoration: (RSVerticalTick new ).
-	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
-	c container: canvas.
-	
-	lb := RSLegend new.
-	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
-	lb build.
-	
-	c ylabel: 'Nb. of classes'.
-	c xlabel: 'Time'.
-	
-	c open
+	^self openAndExportChart: c name: 'Fig8'.
 ]
 
 { #category : #'I Graph' }
@@ -476,16 +317,28 @@ RTGraphs class >> expertiseInPrototypes [
 
 ]
 
+{ #category : #private }
+RTGraphs class >> exportAsPDFCanvas: aRSCanvas name: aString [
+	"This method export a canvas to a PDF file at the root"
+	
+	aString ifNil:[^self].
+	
+	RSPDFExporter new
+		zoomToShapes;
+		canvas: aRSCanvas;
+		exportToFile: (aString, '.pdf') asFileReference.
+]
+
 { #category : #'B Graph' }
 RTGraphs class >> methodEvolutionBySubsystems [
-<script>
-| x y y2 datas previous c p canvas p2 lb set colors plots data dataSource |
+	<script>
+	| x y  datas  c p canvas  lb  colors plots data dataSource manualTicks |
 
 	c := RSChart new.
-	
 	datas := RTPrototypeDataRepository subSystemsSortedByName.
 	colors := Color wheel: datas size.
 	plots := OrderedCollection new.
+	
 	1 to: datas size do: [ :index |
 		x := OrderedCollection new.
 		y := OrderedCollection new.
@@ -499,31 +352,40 @@ RTGraphs class >> methodEvolutionBySubsystems [
 		p x: x y: y.
 		p color: (colors at:index).
 		c addPlot: p.
-		plots add: (colors at:index)->((datas at: index) name->p).
+		plots add: (colors at:index)->((datas at: index) idWithName->p).
 		 ].
 	
 
-	c addDecoration: (RSHorizontalTick new labelConversion: [ :val | Date julianDayNumber: val ]; useDiagonalLabel; numberOfTicks: 15; yourself ).
-	c addDecoration: (RSVerticalTick new ).
+	manualTicks := RSManualHorizontalTick new
+		               labelConversion: [ :val | 
+			               (Date julianDayNumber: val) year ];
+		               useDiagonalLabel;
+		               useNiceLabel;
+		               yourself.
+	2010 to: 2021 do: [ :yr | manualTicks addValue: (Date year: yr day: 1) julianDayNumber].
+
+	c addDecoration: manualTicks.
+	c addDecoration: RSVerticalTick new.
+	
 	canvas := RSCanvas new.
 	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	
 	lb := RSLegend new.
 	lb container: c canvas.
-	plots do: [ :plt |
-		lb text: plt value key withBoxColor: plt key.
-	].
-	lb legendDo: [ :shape | shape withBorder; padding: 10; scaleBy: 0.5 ].
-	lb location 
-		inner; bottom; right; offset: -25.
+	plots do: [ :plt | lb text: plt value key withBoxColor: plt key ].
+	lb legendDo: [ :shape | 
+		shape
+			withBorder;
+			padding: 10;
+			scaleBy: 0.5 ].
+	lb location inner; bottom; right; offset: -25.
 	lb build.
 	
-	c ylabel: 'Nb. of methods'.
-	c xlabel: 'Time'.
+	c ylabel: 'Nb. of Methods'.
+	c xlabel: 'Years'.
 	
-	c open
+	^self openAndExportChart: c name: 'Fig8-b'
 ]
 
 { #category : #'subsystems graphs' }
@@ -1062,7 +924,31 @@ RTGraphs class >> numberOfSubsystemsUses [
 	 canvas zoomToFit
 ]
 
-{ #category : #'A Graph' }
+{ #category : #private }
+RTGraphs class >> openAndExportChart: aRSChart name: aString [
+	"This method set interaction and open a graph canvas"
+	
+	"Setup standard size"
+	aRSChart chartExtents extent: 400@((400*9)/16).
+	
+	"Build the canvas before have interaction (dont export UI)"
+	aRSChart build.
+
+	"Export as PDF"
+	self exportAsPDFCanvas: aRSChart canvas name: aString.
+
+	"Setup interaction"
+	aRSChart canvas @ RSDraggableCanvas.
+	aRSChart canvas @ RSZoomableCanvas.
+	aRSChart canvas @ RSCanvasController.
+
+	"Open the view"
+	aRSChart canvas openOnceWithTitle: 'ReuseTale - ', (aString ifNil:['untitled graph']).
+	
+	^aRSChart
+]
+
+{ #category : #'A LaTeX' }
 RTGraphs class >> openAverageLatexTable [
 	^'
 \begin{table}[]
@@ -1074,7 +960,7 @@ RTGraphs class >> openAverageLatexTable [
 '
 ]
 
-{ #category : #'A Graph' }
+{ #category : #'A LaTeX' }
 RTGraphs class >> openFullStatisticsLatexTable [
 	^'
 \definecolor{Gray}{gray}{0.9}
@@ -1088,7 +974,7 @@ RTGraphs class >> openFullStatisticsLatexTable [
 '
 ]
 
-{ #category : #'A Graph' }
+{ #category : #'A LaTeX' }
 RTGraphs class >> overallLatexTable [
 
 	<script>
@@ -1405,8 +1291,9 @@ c addPlot: p3.
 
 { #category : #'A Graph' }
 RTGraphs class >> reuseSubsystemsByPrototypes [
-<script>
-| x y y2 datas previous c p canvas p2 lb set |
+	<script>
+	| x y y2 datas previous c p canvas p2 lb set |
+	
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
@@ -1424,17 +1311,15 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 		 ].
 	c := RSChart new.
 	p := RSBarPlot  new x: x y: y2.
-	p color: Color blue lighter.
+	p color: Color cyan.
 	c addPlot: p.
 	p2 := RSBarPlot  new x: x y: y.
-	p2 color: (Color blue muchDarker).
+	p2 color: (Color blue).
 	c addPlot: p2.
 
 	c addDecoration: (RSHorizontalTick new fromNames: (datas collect: [:e | e name]); useDiagonalLabel ; yourself).
 	c addDecoration: (RSVerticalTick new ).
 	canvas := RSCanvas new.
-	canvas @ RSCanvasController.
-	c chartExtents extent: 400@((400*9)/16).
 	c container: canvas.
 	
 	lb := RSLegend new.
@@ -1446,7 +1331,7 @@ RTGraphs class >> reuseSubsystemsByPrototypes [
 		inner; bottom; right; offset: -10.
 	lb build.
 	
-	c open
+	^self openAndExportChart: c name: 'AGraph'.
 ]
 
 { #category : #'C Graph' }
