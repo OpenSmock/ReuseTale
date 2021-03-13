@@ -875,63 +875,6 @@ RTGraphs class >> notReusedInPercentDuringYears [
 
 ]
 
-{ #category : #'G Graph' }
-RTGraphs class >> numberOfSubsystemsUses [
-
-	<script>
-	| prototypes chart lineNbUsedSubsystems subsystems x y index canvas |
-	prototypes := RTPrototypeDataRepository prototypes.
-	subsystems := RTPrototypeDataRepository subSystems.
-
-	"Initialize uses table"
-	x := OrderedCollection new.
-	y := OrderedCollection new.
-	index := 1.
-
-	"For earch subsystems, count every use in each prototypes"
-	subsystems do: [ :ss | 
-		| count |
-		count := 0.
-		prototypes do: [ :proto | 
-			| value |
-			value := proto subSystems
-				         detect: [ :e | e name = ss name ]
-				         ifNone: [ nil ].
-			value ifNotNil: [ count := count + 1 ] ].
-		x add: index.
-		y add: count.
-		index := index + 1 ].
-
-	"Create lines"
-	lineNbUsedSubsystems := RSBarPlot new x: x y: y.
-
-	chart := RSChart new.
-	chart addPlot: lineNbUsedSubsystems.
-
-	"Chart style"
-	chart title: 'Number of subsystems uses'.
-	chart addDecoration: (RSHorizontalTick new
-			 fromNames: (subsystems collect: [ :ss | ss description ]) values;
-			 useNiceLabel;
-			 useDiagonalLabel;
-			 yourself).
-	chart addDecoration: (RSVerticalTick new
-			 integer;
-			 numberOfTicks: 24;
-			 yourself).
-
-	canvas := RSCanvas new.
-	canvas @ RSZoomableCanvas.
-	canvas @ RSDraggableCanvas.
-
-
-	chart chartExtents extent: 300 @ 200.
-	chart container: canvas.
-	"Open the Chart"
-	chart open.
-	 canvas zoomToFit
-]
-
 { #category : #private }
 RTGraphs class >> openAndExportRSObject: aRSObject name: aString [
 	"This method set interaction and open a graph canvas"
@@ -1510,16 +1453,12 @@ RTGraphs class >> standardRSObjectExtents [
 RTGraphs class >> subsystemsAndComponentsNumberInTime [
 
 	<script>
-	| x y datas c p canvas y2 p2 lb datas2 comps manualTicks previous dic asso |
+	| x y datas c p canvas y2 p2 lb datas2 comps manualTicks previous asso |
 	x := OrderedCollection new.
 	y := OrderedCollection new.
 	y2 := OrderedCollection new.
 
-	dic := OrderedDictionary new.
 	datas := RTPrototypeDataRepository getSubSystemsByYear.
-	datas keys asSortedCollection do: [ :e | 
-		dic at: e put: (datas at: e) ].
-	datas := dic.
 	datas keys asSortedCollection last + 1 to: 2021 do: [ :i | 
 	datas at: i put: Array new ].
 	previous := 0.
@@ -1642,6 +1581,55 @@ RTGraphs class >> subsystemsSizeDuringYears [
 	"Open the Chart"
 	chart show.
 
+]
+
+{ #category : #'G Graph' }
+RTGraphs class >> subsystemsUsesInPrototypes [
+	<script>
+	| prototypes chart lineNbUsedSubsystems subsystems x y index canvas |
+	prototypes := RTPrototypeDataRepository prototypes.
+	subsystems := RTPrototypeDataRepository subSystems.
+
+	"Initialize uses table"
+	x := OrderedCollection new.
+	y := OrderedCollection new.
+	index := 1.
+
+	"For earch subsystems, count every use in each prototypes"
+	subsystems do: [ :ss | 
+		| count |
+		count := 0.
+		prototypes do: [ :proto | 
+			| value |
+			value := proto subSystems
+				         detect: [ :e | e name = ss name ]
+				         ifNone: [ nil ].
+			value ifNotNil: [ count := count + 1 ] ].
+		x add: index.
+		y add: count.
+		index := index + 1 ].
+
+	"Create lines"
+	lineNbUsedSubsystems := RSBarPlot new x: x y: y.
+
+	chart := RSChart new.
+	chart addPlot: lineNbUsedSubsystems.
+
+	"Chart style"
+	chart addDecoration: (RSHorizontalTick new
+			 fromNames: (subsystems collect: [ :ss | ss description ]) values;
+			 useNiceLabel;
+			 useDiagonalLabel;
+			 yourself).
+	chart addDecoration: (RSVerticalTick new
+			 integer;
+			 numberOfTicks: 24;
+			 yourself).
+
+	canvas := RSCanvas new.
+	chart container: canvas.
+	
+	^self openAndExportRSObject: chart name: 'GGraph'.
 ]
 
 { #category : #'E Graph' }
