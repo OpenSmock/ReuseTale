@@ -148,6 +148,16 @@ Reused components and classes come from the subsystems used to build the prototy
 '
 ]
 
+{ #category : #'A LaTeX' }
+RTGraphs class >> closeSubSystemsStatisticsLatexTable [
+	^'
+\end{tabular}
+\caption{TBD}
+\label{ssy-stats}
+\end{table*}
+'
+]
+
 { #category : #'others graphs and tests' }
 RTGraphs class >> codeByDate [
 <script>
@@ -929,6 +939,21 @@ RTGraphs class >> openFullStatisticsLatexTable [
 ]
 
 { #category : #'A LaTeX' }
+RTGraphs class >> openSubSystemsStatisticsLatexTable [
+	^'
+\begin{table*}[]
+\centering
+\begin{tabular}{lccccc}
+	\textit{Subsystem} &
+	\textit{Versions} &
+	\textit{Last version} &
+	\textit{1$^{st}$ version} &
+	\textit{1$^{st}$ reuse} &
+	\textit{Reuse}\\
+'
+]
+
+{ #category : #'A LaTeX' }
 RTGraphs class >> overallLatexTable [
 
 	<script>
@@ -1311,8 +1336,8 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 	<script>
 	| x datas previous p lb val |
 	x := OrderedCollection new.
-	x add: 'Use Tactical View Subsystem' -> 0.
-	x add: 'Not use Tactical View Subsystem' -> 0.
+	x add: 'Prototypes using the Tactical View Subsystem' -> 0.
+	x add: 'Prototypes not using the Tactical View Subsystem' -> 0.
 
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	previous := nil.
@@ -1458,9 +1483,10 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	datas := RTPrototypeDataRepository getSubSystemsByYear.
 	datas keys asSortedCollection last + 1 to: 2021 do: [ :i | 
 	datas at: i put: Array new ].
+	
 	previous := 0.
 	datas keys do: [ :key | 
-		asso := key->(datas at: key).
+		asso := key -> (datas at: key).
 		x add: (Date year: asso key day: 1) julianDayNumber.
 		asso value size = 0
 			ifFalse: [ 
@@ -1479,7 +1505,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 			ifFalse: [ 
 				comps associations doWithIndex: [ :a :index | 
 					y2 at: index put: (y2 at: index) + a value ] ] ].
-
+self halt.
 	c := RSChart new.
 
 	p := RSBarPlot new
@@ -1539,6 +1565,36 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 	lb build.
 
 	^ self openAndExportRSObject: c name: 'Fig12'
+]
+
+{ #category : #'A LaTeX' }
+RTGraphs class >> subsystemsLatexTable [
+
+	<script>
+	| datas stream |
+	datas := RTPrototypeDataRepository subSystemsSortedByName.
+	stream := WriteStream on: String new.
+	stream << self openSubSystemsStatisticsLatexTable.
+
+
+	datas do: [ :ssy | 
+		stream cr.
+		stream << ssy idWithName.
+		stream << ' & '.
+		stream << ssy publications printString.		
+		stream << ' & '.
+		stream << ssy mostRecentVersionDate year printString.
+		stream << ' & '.
+		stream << ssy firstVersionDate year printString.
+		stream << ' & '.
+		stream << ssy sourceCodeDataHistory keys asSortedCollection first year printString.
+		stream << ' & '.
+		stream << ssy sourceCodeDataHistory size printString.
+		stream << '\\'
+		].
+
+	stream << self closeSubSystemsStatisticsLatexTable.
+	stream contents inspect
 ]
 
 { #category : #'others graphs and tests' }
