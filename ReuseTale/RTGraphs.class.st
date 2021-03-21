@@ -1505,7 +1505,7 @@ RTGraphs class >> subsystemsAndComponentsNumberInTime [
 			ifFalse: [ 
 				comps associations doWithIndex: [ :a :index | 
 					y2 at: index put: (y2 at: index) + a value ] ] ].
-self halt.
+
 	c := RSChart new.
 
 	p := RSBarPlot new
