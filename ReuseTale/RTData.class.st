@@ -25,6 +25,10 @@ RTData >> addSourceCodeData: aRTSourceCodeData dateTime: aDateTime [
 	
 	aDateTime ifNil:[self error:'Date should be not nil'].
 	aRTSourceCodeData ifNil:[self error:'Source code datas should be not nil'].
+	
+	"Check if date time is already present"
+	(self sourceCodeDataHistory includesKey: aDateTime) ifTrue:[self error:'Error : Source Code Data already present at this date and time.'. ^self]. 
+	
 	self sourceCodeDataHistory at: aDateTime put: aRTSourceCodeData
 ]
 
