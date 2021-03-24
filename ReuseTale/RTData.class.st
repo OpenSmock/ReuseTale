@@ -210,6 +210,32 @@ RTData >> nbMethods [
 	^self sourceCodeData methods
 ]
 
+{ #category : #statistics }
+RTData >> percentOf: aNumber in: aTotal [
+
+	^ (aNumber / aTotal) asFloat * 100 roundDownTo: 0.01
+]
+
+{ #category : #printing }
+RTData >> print: anObject limited: limit [
+
+	^ self
+		  printStringLimitedTo: limit
+		  using: [ :s | anObject printOn: s ]
+]
+
+{ #category : #printing }
+RTData >> printStringLimitedTo: limit using: printBlock [
+
+	"Answer a String whose characters are a description of the receiver
+	produced by given printBlock. It ensures the result will be not bigger than given limit"
+
+	| limitedString |
+	limitedString := String streamContents: printBlock limitedTo: limit.
+	limitedString size < limit ifTrue: [ ^ limitedString ].
+	^ limitedString
+]
+
 { #category : #accessing }
 RTData >> publications [
 

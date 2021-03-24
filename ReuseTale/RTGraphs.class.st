@@ -341,6 +341,27 @@ RTGraphs class >> exportAsPDFCanvas: aRSCanvas name: aString [
 		exportToFile: (aString, '.pdf') asFileReference.
 ]
 
+{ #category : #'A LaTeX' }
+RTGraphs class >> fullPrototypeWithSubsystemsStatiticsFor: aPrototype [
+	
+	| str |
+	str := WriteStream on: String new.
+	str << '
+\begin{table*}[]
+\centering
+\begin{tabular}{lr|lr|l}
+\textit{Sub-System (the $^{*}$ means reuse)} & \textit{Components} & \hphantom{0}\hphantom{.}\textit{\%} & \textit{Classes} & \hphantom{0}\hphantom{.}\textit{\%}\\'.
+	aPrototype printStatisticsWithSubsystemsOn: str.
+	str
+	<<
+	'\end{tabular}
+\caption{Component and class reuse in a prototype from 2019: 603 reused components (89.47\% of the prototype''s components) and 991 reused classes (58.16\% of the non-component prototype''s classes).}
+\label{table:prototype-X}
+\vspace{-2em}
+\end{table*}'.
+	^str contents
+]
+
 { #category : #'B Graph' }
 RTGraphs class >> methodEvolutionBySubsystems [
 	<script>
@@ -945,7 +966,7 @@ RTGraphs class >> openSubSystemsStatisticsLatexTable [
 \centering
 \begin{tabular}{lccccc}
 	\textit{Subsystem} &
-	\textit{Versions} &
+	\textit{Revisions} &
 	\textit{Last version} &
 	\textit{1$^{st}$ version} &
 	\textit{1$^{st}$ reuse} &
@@ -1589,7 +1610,7 @@ RTGraphs class >> subsystemsLatexTable [
 		stream << ' & '.
 		stream << ssy sourceCodeDataHistory keys asSortedCollection first year printString.
 		stream << ' & '.
-		stream << ssy sourceCodeDataHistory size printString.
+		stream << ssy reuseInPrototypes printString.
 		stream << '\\'
 		].
 

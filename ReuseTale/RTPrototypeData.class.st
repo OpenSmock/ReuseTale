@@ -159,28 +159,35 @@ RTPrototypeData >> percentOfReusedComponents [
 ]
 
 { #category : #printing }
-RTPrototypeData >> print: anObject limited: limit [
-
-	^ self
-		  printStringLimitedTo: limit
-		  using: [ :s | anObject printOn: s ]
-]
-
-{ #category : #printing }
 RTPrototypeData >> printOn: aStream [
 	aStream << self name
 ]
 
-{ #category : #printing }
-RTPrototypeData >> printStringLimitedTo: limit using: printBlock [
+{ #category : #statistics }
+RTPrototypeData >> printStatisticsWithSubsystemsOn: stream [
+	
+	stream << self name. 
+	stream << '(new code) & '.
+	stream << self nbNewComponents printString. 
+	stream << ' & '.
+	stream << (self print: self percentOfNewComponents limited: 5).
+	stream << ' & '.
+	stream << self nbNewClasses printString. 
+	stream << ' & '.
+	stream << (self print: self percentOfNewClasses limited: 5).	
+	stream << '\\'. 
+	stream cr.
+	self subSystems do:[:ssy| ssy printStatisticsOn: stream forPrototype: self].
+		
+	stream << 'Total & '.
+	stream << self nbTotalComponents printString. 
+	stream << ' & 100 &'.
+	stream << self nbTotalClasses printString. 
+	stream << ' & 100 \\'.
+	stream cr.
+		
+	^stream contents
 
-	"Answer a String whose characters are a description of the receiver
-	produced by given printBlock. It ensures the result will be not bigger than given limit"
-
-	| limitedString |
-	limitedString := String streamContents: printBlock limitedTo: limit.
-	limitedString size < limit ifTrue: [ ^ limitedString ].
-	^ limitedString
 ]
 
 { #category : #accessing }
