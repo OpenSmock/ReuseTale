@@ -1357,8 +1357,8 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypesPie [
 	<script>
 	| x datas previous p lb val |
 	x := OrderedCollection new.
-	x add: 'Prototypes using the Tactical View Subsystem' -> 0.
-	x add: 'Prototypes not using the Tactical View Subsystem' -> 0.
+	x add: 'Prototypes using Tactical Model and Geo. View subsystem' -> 0.
+	x add: 'Prototypes not using Tactical Model and Geo. View subsystem' -> 0.
 
 	datas := RTPrototypeDataRepository getPrototypesFromOlderToMostRecent.
 	previous := nil.
