@@ -1708,7 +1708,7 @@ RTGraphs class >> subsystemsUsesInPrototypes [
 	canvas := RSCanvas new.
 	chart container: canvas.
 	
-	^self openAndExportRSObject: chart name: 'GGraph'.
+	^self openAndExportRSObject: chart name: 'FigX1'.
 ]
 
 { #category : #'E Graph' }
