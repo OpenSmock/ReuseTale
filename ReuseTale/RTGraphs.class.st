@@ -923,8 +923,8 @@ RTGraphs class >> openAndExportRSObject: aRSObject name: aString [
 
 	"Setup interaction"
 	aRSObject canvas zoomToFit. 
-	aRSObject canvas @ RSDraggableCanvas.
-	aRSObject canvas @ RSZoomableCanvas.
+	aRSObject canvas @ RSDraggableCanvasInteraction.
+	aRSObject canvas @ RSZoomableCanvasInteraction .
 	aRSObject canvas @ RSCanvasController.
 
 	"Open the view"
@@ -1341,8 +1341,8 @@ RTGraphs class >> reuseTacticalSubsystemInPrototypes [
 	c chartExtents extent: 400 @ (400 * 9 / 16).
 	c container: canvas.
 	c xlabel: 'Tactical View reuse in prototypes'.
-	canvas @ RSDraggableCanvas.
-	canvas @ RSZoomableCanvas.
+	canvas @ RSDraggableCanvasInteraction .
+	canvas @ RSZoomableCanvasInteraction .
 
 	c open.
 
@@ -1825,9 +1825,9 @@ RTGraphs class >> timeSpentInPrototypes [
 	lb location offset: 200 @ 40.
 	lb build.
 
-	canvas @ RSDraggableCanvas.
-	canvas @ RSZoomToFitCanvas.
-	canvas @ RSZoomableCanvas.
+	canvas @ RSDraggableCanvasInteraction .
+	canvas @ RSZoomToFitCanvasInteraction .
+	canvas @ RSZoomableCanvasInteraction .
 	c open.
 
 	RSPDFExporter new
