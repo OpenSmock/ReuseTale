@@ -6,11 +6,13 @@ ReuseTale is a project to support the analysis of a re-use feedback in an indust
 Datas :
 Two .csv files at the root of the project extracted from an enterprise repository of source-code.
 
-![image](https://user-images.githubusercontent.com/49183340/134221188-75191dd5-e901-4f2d-964e-8aefaa34bba6.png)
-![image](https://user-images.githubusercontent.com/49183340/134221262-3cae7d32-7892-44f4-88b9-2f61e08036c7.png)
-![image](https://user-images.githubusercontent.com/49183340/134221339-c15a2304-b4a5-49ce-adb0-3ea9a4fb7801.png)
+![image](https://user-images.githubusercontent.com/49183340/134222961-82f9d52f-3675-43a1-95fe-868cf55ec77c.png)
 
 
+<img src="https://user-images.githubusercontent.com/49183340/134221188-75191dd5-e901-4f2d-964e-8aefaa34bba6.png" width= "30%" height="33%" align="left">
+<img src="https://user-images.githubusercontent.com/49183340/134221262-3cae7d32-7892-44f4-88b9-2f61e08036c7.png" width= "30%" height="33%" align="left">
+<img src="https://user-images.githubusercontent.com/49183340/134221339-c15a2304-b4a5-49ce-adb0-3ea9a4fb7801.png" width= "30%" height="33%">
+  
 Related links :
 * [15 years of reuse experience in evolutionary prototyping for the defense industry](https://doi.org/10.1007/978-3-030-64694-3_6) : The paper at the beginning of the project
 * [Molecule: live prototyping with component-oriented programming](https://hal.inria.fr/hal-02966704)
