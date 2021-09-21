@@ -3,12 +3,18 @@
 # ReuseTale
 ReuseTale is a project to support the analysis of a re-use feedback in an industrial context. ReuseTale help us to import, visualize and analyse some projects datas (source-code and contributors).
 
-Related links :
-* [The paper at the beginning of the project](https://doi.org/10.1007/978-3-030-64694-3_6)
-* [Molecule, a component oriented framework for Pharo](https://github.com/OpenSmock/Molecule)
-
 Datas :
 Two .csv files at the root of the project extracted from an enterprise repository of source-code.
+
+Related links :
+* [15 years of reuse experience in evolutionary prototyping for the defense industry](https://doi.org/10.1007/978-3-030-64694-3_6) : The paper at the beginning of the project
+* [Molecule: live prototyping with component-oriented programming](https://hal.inria.fr/hal-02966704)
+* [Molecule, a component oriented framework for Pharo](https://github.com/OpenSmock/Molecule)
+
+Related videos :
+[![15 years of reuse experience in evolutionary prototyping for the defense industry](https://user-images.githubusercontent.com/49183340/134218679-4d457b61-72ab-4a37-929e-46ac2172b6ed.png)](https://www.youtube.com/embed/k9raUDp5ugA)
+
+![Molecule: live prototyping with component-oriented programming](https://user-images.githubusercontent.com/49183340/134220291-c4f8310c-ba74-415c-892c-ce01524ed218.png)
 
 ## Loading project
 
@@ -70,7 +76,7 @@ RTPrototypeDataRepository reset.
 ```
 A COMPLETER POUR PLUS DE CLARTE :
 => Ajouter dans l'introduction la présentation du projet : C'est un projet qui permet d'exploiter des méta-données extraitent de projets réalisés en entreprise dans un contexte industriel. L'objectif original est d'étudier la réutilisation d'éléments entre les projets sur une quinzaine d'années de développements logiciel. On utilise une partie descriptive des données, ainsi qu'une mise en forme sous la forme de visualisation 2D. Le point d'entrée consiste en deux fichiers CSV issues d'extraction automatique du code des projets étudiés. 
-++ ajouter le lien vers papier IWST + liens vers les vidéos de présentation de chacun
+++ ajouter le lien vers papier IWST + liens vers les vidéos de présentation de chacun [OK]
 => Pour la mise en forme nous utilisons l'environnement de dev Pharo (+lien) et la bibliothèque Roassal3 (+ lien) pour la programmation des graphiques. + Tuto pour télécharger Pharo et installer ReuseTale
 => Ajouter la description des données présentent dans les fichiers CSV (colonnes et lignes)
 => Tuto pour afficher les graphiques avec Roassal (procédure pour executer les scripts), en prendre quelques unes et faire des copies écrans pour les expliciter
