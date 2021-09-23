@@ -70,6 +70,8 @@ RTPrototypeDataRepository openFileToBuildPrototypesData.
 RTPrototypeDataRepository prototypes inspect.
 ```
 
+![InspectPrototypes](https://user-images.githubusercontent.com/49183340/134537802-229d15ed-2d27-49d2-8fce-4f8ebd571995.gif)
+
 ### SubSystems
 
 ```Smalltalk
