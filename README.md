@@ -23,9 +23,22 @@ Related videos :
 
 ![Molecule: live prototyping with component-oriented programming](https://user-images.githubusercontent.com/49183340/134220291-c4f8310c-ba74-415c-892c-ce01524ed218.png)
 
-## Loading project
+## How to install the project
 
-For Pharo 9 :
+This section detail how to install the project from scratch.
+
+### Get Pharo 9 (also available for Pharo 8)
+
+Download and install the [Pharo Launcher](https://pharo.org/download.html) for your operating system (Windows, GNU/Linux or MacOs).
+The Pharo launcher help to download and install some Pharo images, some documentation here to [install a Pharo 9 image with the Pharo Launcher](https://pharo-project.github.io/pharo-launcher/create-images/).
+
+More informations about Pharo on [pharo.org](https://pharo.org/).
+
+When the pharo 9 image is created, start it and execute the loading project code below.
+
+### Loading project into Pharo
+
+For Pharo 9, open a Playground and execute this code :
 
 ```Smalltalk
 Metacello new
@@ -34,22 +47,13 @@ Metacello new
   load.
 ```
 
+![LoadProject](https://user-images.githubusercontent.com/49183340/134548348-fdfc7bbc-6101-4de4-945e-dc60f3d27ae4.gif)
+
 The project works on Pharo 8 (same script to import it) without graph exportation.
 
-## Import datas with DoIt 
-These scripts imports project data files (two .csv files in project root).
+### Import datas from files
 
-```Smalltalk
-"First file"
-RTPrototypeDataRepository buildSubSystemsDataFromFilename: 'SubSystems_data.csv' asFileReference.
-```
-
-```Smalltalk
-"Second file"
-RTPrototypeDataRepository buildPrototypesDataFromFilename: 'Prototypes_data.csv' asFileReference.
-```
-
-## Import datas with UI
+#### Method A : Import datas with our Wizard
 This is an UI to import your own files.
 
 ```Smalltalk
@@ -62,9 +66,28 @@ RTPrototypeDataRepository openFileToBuildSubSystemsData.
 RTPrototypeDataRepository openFileToBuildPrototypesData. 
 ```
 
-## Inspect imported datas
+#### Method B : Import datas manualy ("DoIt" method) 
+These scripts imports project data files (two .csv files in project root).
 
-### Prototypes
+```Smalltalk
+"First file"
+RTPrototypeDataRepository buildSubSystemsDataFromFilename: 'SubSystems_data.csv' asFileReference.
+```
+
+```Smalltalk
+"Second file"
+RTPrototypeDataRepository buildPrototypesDataFromFilename: 'Prototypes_data.csv' asFileReference.
+```
+
+## How to consult some stat view
+
+Browse the Pharo classes packages to our projet : "ReuseTale" and go to the "RTGraphs" class. In class side select the script yout want to run and display the stat view in a window. Each opened stat view is automaticaly exported into a PDF file at the root of the pharo image. 
+
+![GraphView](https://user-images.githubusercontent.com/49183340/134546243-1755e555-9cbe-4b6c-ab40-b29bb0a65d5f.gif)
+
+## Navigate on imported datas
+
+### Prototypes datas
 
 ```Smalltalk
 RTPrototypeDataRepository prototypes inspect.
@@ -72,7 +95,7 @@ RTPrototypeDataRepository prototypes inspect.
 
 ![InspectPrototypes](https://user-images.githubusercontent.com/49183340/134537802-229d15ed-2d27-49d2-8fce-4f8ebd571995.gif)
 
-### SubSystems
+### SubSystems datas
 
 ```Smalltalk
 RTPrototypeDataRepository subSystems inspect.
