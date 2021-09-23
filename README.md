@@ -78,6 +78,8 @@ RTPrototypeDataRepository prototypes inspect.
 RTPrototypeDataRepository subSystems inspect.
 ```
 
+![InspectSubsystems](https://user-images.githubusercontent.com/49183340/134542327-ee323f8e-d7dc-481a-89e7-cab4aa2a8e78.gif)
+
 ## Remove imported datas
 
 ```Smalltalk
