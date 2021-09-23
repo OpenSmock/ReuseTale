@@ -83,6 +83,19 @@ RTPrototypeDataRepository subSystems inspect.
 ```Smalltalk
 RTPrototypeDataRepository reset.
 ```
+
+## Credits
+
+* **Pierre Laborde** - *Initial work* - [labordep](https://github.com/labordep)
+* **Steven Costiou** - *Initial work* - [StevenCostiou](https://github.com/StevenCostiou)
+* **Eric Le Pors** - *Initial work* - [ELePors](https://github.com/ELePors)
+* **Alain Plantec** - *Initial work* - [plantec](https://github.com/plantec)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
 A COMPLETER POUR PLUS DE CLARTE :
 => Ajouter dans l'introduction la présentation du projet : C'est un projet qui permet d'exploiter des méta-données extraitent de projets réalisés en entreprise dans un contexte industriel. L'objectif original est d'étudier la réutilisation d'éléments entre les projets sur une quinzaine d'années de développements logiciel. On utilise une partie descriptive des données, ainsi qu'une mise en forme sous la forme de visualisation 2D. Le point d'entrée consiste en deux fichiers CSV issues d'extraction automatique du code des projets étudiés. 
 ++ ajouter le lien vers papier IWST + liens vers les vidéos de présentation de chacun [OK]
