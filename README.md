@@ -1,7 +1,7 @@
 ![ReuseTaleBackground](https://user-images.githubusercontent.com/49183340/111032642-92f67a00-840d-11eb-8d9a-eebce4ffa9c5.jpg)
 
 # ReuseTale
-ReuseTale is a project to support the analysis of a re-use feedback in an industrial context. ReuseTale help us to import, visualize and analyse some projects datas (source-code and contributors). It is a project that makes it possible to exploit metadata extracted from projects carried out in companies in an industrial context. The original objective is to study the reuse of elements between projects over fifteen years of software development. A descriptive part of the data is used, as well as a formatting in the form of 2D visualization. The entry point consists of two CSV files resulting from automatic extraction of the code of the studied projects. 
+ReuseTale is a project to support the analysis of a reuse in an industrial context. ReuseTale make it available tools to import, to visualize and to analyse some projects data (source-code and contributors). Data are actually extracted from projects carried out in companies in an industrial context. The original objective is to study the reuse of code elements between projects over fifteen years of software development. A descriptive part of the data is used, as well as a formatting in the form of 2D visualizations. The entry point consists of two CSV files resulting from automatic extraction of the code of the studied projects. All the provided materials are reusable for other studies  
 
 Datas are into two .csv files at the root of the project extracted from an enterprise repository of source-code.
 
