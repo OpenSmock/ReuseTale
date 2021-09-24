@@ -9,12 +9,12 @@ These two files are here :
 * [Prototypes_data.csv](https://github.com/OpenSmock/ReuseTale/blob/main/Prototypes_data.csv)
 * [SubSystems_data.csv](https://github.com/OpenSmock/ReuseTale/blob/main/SubSystems_data.csv)
 
-## Prototypes datas
+## Prototypes data
 This file contains on each lines some prototypes and there used subsystem, each prototypes is separated by an empty line. Each columns details theses collected datas : Total components, Total classes (including components), Total classes (without components), Total methods, Prototype period start (DD MM YYYY - date of first publication), Prototype period stop (DD MM YYYY - date of last publication), Prototype's developers (each developper is identified by a Number, i.e. dev 1, dev 2 and dev 3), number of publications of the prototype.
 
 ![image](https://user-images.githubusercontent.com/49183340/134550874-66cb19bc-956d-4414-bddd-7bdaa4e8693d.png)
 
-## SubSystems datas
+## SubSystems data
 This file contains on each columns a subsystem. Each lines details theses collected datas for each subsystem : Description, number of publications, date of first publication, date of last publication, number of subsystem developers.
 
 ![image](https://user-images.githubusercontent.com/49183340/134551474-1da008ce-3940-49b8-b21d-5aaa9cdeeed9.png)
